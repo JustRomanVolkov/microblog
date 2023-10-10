@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+    <title>{{ title }} - Микроблог</title>
+    {% else %}
+    <title>Добро пожаловать в Микроблог</title>
+    {%  endif %}
+</head>
+<body>
+    <h1>Привет, {{ user.username }}!</h1>
+</body>
+</html>
