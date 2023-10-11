@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    {% if title %}
-    <title>{{ title }} - Микроблог</title>
-    {% else %}
-    <title>Добро пожаловать в Микроблог</title>
-    {%  endif %}
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <h1>Привет, {{ user.username }}!</h1>
     {% for post in posts %}
     <div><p>{{ post.author.username}} сказал: <b>{{ post.body }}</b></p></div>
     {% endfor %}
-</body>
-</html>
+{% endblock %}
