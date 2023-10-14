@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
+
+# Стандартные библиотеки Python
 from datetime import datetime
-from app import db
-from werkzeug.security import generate_password_hash, check_password_hash
+
+# Библиотеки третьей стороны
+from flask_login import UserMixin
 from sqlalchemy.orm import relationship
+from werkzeug.security import generate_password_hash, check_password_hash
+
+# Собственные модули
+from app import db, login
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """
     Модель пользователя для базы данных.
     """
+    __tablename__ = 'user'
     id: int = db.Column(db.Integer, primary_key=True)
     username: str = db.Column(db.String(64), index=True, unique=True)
     email: str = db.Column(db.String(120), index=True, unique=True)
@@ -17,6 +25,7 @@ class User(db.Model):
     # Для отношений «один ко многим».
     # Аргумент backref определяет имя поля добавленное к объектам класса «много», для указания на объект «один».
     posts: relationship = db.relationship('Post', backref='author', lazy='dynamic')
+    __allow_unmapped__ = True
 
     def __repr__(self) -> str:
         """
@@ -57,3 +66,17 @@ class Post(db.Model):
         Метод, возвращающий строковое представление объекта поста.
         """
         return f'Пост {self.body}'
+
+
+@login.user_loader
+def load_user(id: int) -> User | None:
+    """
+    Функция для загрузки пользователя по его идентификатору.
+
+    Args:
+        id (int): Идентификатор пользователя.
+
+    Returns:
+        User: Экземпляр пользователя, если найден, или None.
+    """
+    return User.query.get(int(id))
