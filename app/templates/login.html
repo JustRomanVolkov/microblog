@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Регистрация</h1>
+
+    {# Атрибут novalidate используется для указания веб-браузеру не применять проверку к полям в этой форме, #}
+    {# что фактически оставляет эту задачу приложению Flask, запущенному на сервере. #}
+    <form action="" method="post" >
+
+        {# скрытое поле, содержащее токен, используемый для защиты формы от атак CSRF#}
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}
+            {% for error in form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {%  endfor %}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
