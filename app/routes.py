@@ -9,8 +9,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 from urllib.parse import urlsplit
 
 # Собственные модули
-from app import app
-from app.forms import LoginForm
+from app import app, db
+from app.forms import LoginForm, RegistrationForm
 from app.models import User
 
 
@@ -24,7 +24,6 @@ def index() -> str:
     Returns:
         str: HTML-код главной страницы.
     """
-    user: Dict[str, str] = {'username': 'Роман Волков'}
     posts: List[Dict[str, Union[Dict[str, str], str]]] = [
         {
             'author': {'username': 'Олег'},
@@ -40,13 +39,16 @@ def index() -> str:
         }
     ]
     # Отображение главной страницы с постами.
-    return render_template('index.html', title='Главная страница', user=user, posts=posts)
+    return render_template('index.html', title='Главная страница', posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login() -> Union[str, 'Response']:
     """
     Маршрут для страницы авторизации и обработки входа.
+
+    GET-запрос показывает форму авторизации.
+    POST-запрос обрабатывает данные, введенные в форму, и производит вход или направляет на регистрацию.
 
     Returns:
         Union[str, 'Response']: HTML-код страницы авторизации или объект Response.
@@ -92,3 +94,36 @@ def login() -> Union[str, 'Response']:
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register() -> Union[str, 'Response']:
+    """
+    Обработчик маршрута для регистрации новых пользователей.
+
+    GET-запрос показывает форму регистрации.
+    POST-запрос обрабатывает данные, введенные в форму, и регистрирует нового пользователя.
+
+    Returns:
+        str: Возвращает шаблон HTML для отображения формы регистрации или перенаправляет на главную страницу.
+
+    Raises:
+        Redirect: Если пользователь уже аутентифицирован, их перенаправляют на главную страницу.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        # Создание нового пользователя и добавление в базу данных
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+
+        flash('Поздравляем, вы зарегистрированы! Теперь вы можете войти в систему.')
+        return redirect(url_for('login'))
+
+    # Отображение формы регистрации
+    return render_template('register.html', title='Регистрация', form=form)
