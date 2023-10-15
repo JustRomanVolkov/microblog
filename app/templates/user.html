@@ -9,8 +9,6 @@
     </table>
     <hr>
     {% for post in posts %}
-    <p>
-    {{ post.author.username }}: <b>{{ post.body }}</b>
-    </p>
+        {% include '_post.html' %}
     {% endfor %}
 {% endblock %}
