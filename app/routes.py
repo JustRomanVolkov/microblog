@@ -4,9 +4,9 @@
 from typing import List, Dict, Union
 
 # Библиотеки третьей стороны
-
-from flask import render_template, flash, redirect, url_for, Response
-from flask_login import current_user, login_user
+from flask import render_template, flash, redirect, url_for, Response, request
+from flask_login import current_user, login_user, logout_user, login_required
+from urllib.parse import urlsplit
 
 # Собственные модули
 from app import app
@@ -16,6 +16,7 @@ from app.models import User
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index() -> str:
     """
     Отображение главной страницы.
@@ -51,6 +52,7 @@ def login() -> Union[str, 'Response']:
         Union[str, 'Response']: HTML-код страницы авторизации или объект Response.
     """
     # Проверка, если пользователь уже аутентифицирован, перенаправление на главную страницу.
+    # Переменная current_user поступает из Flask-Login
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
@@ -69,7 +71,24 @@ def login() -> Union[str, 'Response']:
 
         # Вход пользователя в систему.
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('index'))
+
+        # Получение значения 'next' из запроса, которое указывает на следующую страницу после успешной авторизации.
+        next_page = request.args.get('next')
+
+        # Проверка, если 'next_page' отсутствует или содержит абсолютный URL (внешнюю ссылку).
+        if not next_page or urlsplit(next_page).netloc != '':
+            # то перенаправляем пользователя на главную страницу.
+            next_page = url_for('index')
+
+        # Перенаправление пользователя на следующую страницу после успешной авторизации,
+        # либо на главную страницу, если 'next_page' отсутствует или содержит абсолютный URL.
+        return redirect(next_page)
 
     # Отображение страницы авторизации с формой.
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
