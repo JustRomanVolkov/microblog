@@ -5,6 +5,7 @@ from datetime import datetime
 
 # Библиотеки третьей стороны
 from flask_login import UserMixin
+from hashlib import md5
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -44,6 +45,24 @@ class User(UserMixin, db.Model):
         Проверка введенного пароля с хэшем пароля пользователя.
         """
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self, size: int) -> str:
+        """
+        Генерирует URL аватара пользователя на основе Gravatar.
+
+        Args:
+            size (int): Размер аватара в пикселях.
+
+        Returns:
+            str: URL аватара пользователя.
+
+        Note:
+            Для генерации аватара используется хеш от адреса электронной почты пользователя (email),
+            который приводится к нижнему регистру, кодируется в формате UTF-8 и хешируется с помощью MD5.
+            Полученный хеш используется в URL для получения аватара с сервиса Gravatar.
+        """
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
 
 class Post(db.Model):

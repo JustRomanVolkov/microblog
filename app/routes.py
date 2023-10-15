@@ -127,3 +127,28 @@ def register() -> Union[str, 'Response']:
 
     # Отображение формы регистрации
     return render_template('register.html', title='Регистрация', form=form)
+
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    """
+    Обработчик маршрута для отображения профиля пользователя.
+
+    Args:
+        username (str): Имя пользователя, чьей профиль нужно отобразить.
+
+    Returns:
+        str: Возвращает шаблон HTML с информацией о пользователе и их постах.
+
+    Raises:
+        404 Not Found: Если пользователь с указанным именем не найден.
+    """
+    user = User.query.filter_by(username=username).first_or_404()
+
+    # Заглушка для постов пользователя (замените этот список на данные из вашей базы данных)
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user, posts=posts)
