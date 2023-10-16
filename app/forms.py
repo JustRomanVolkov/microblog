@@ -2,8 +2,8 @@
 
 # Библиотеки третьей стороны
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 
 # Собственные модули
 from app.models import User
@@ -70,3 +70,17 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Используйте другую почту.')
+
+
+class EditProfileForm(FlaskForm):
+    """
+    Класс формы редактирования профиля.
+
+    Attributes:
+        username (StringField): Поле для изменения имени пользователя.
+        about_me (TextAreaField): Поле для изменения описания информации о пользователе.
+        submit (SubmitField): Кнопка для отправки данных формы
+    """
+    username: StringField = StringField('Имя пользователя', validators=[DataRequired()])
+    about_me: TextAreaField = TextAreaField('Обо мне', validators=[Length(min=0, max=140)])
+    submit: SubmitField = SubmitField('Принять изменения')
