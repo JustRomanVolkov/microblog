@@ -3,6 +3,6 @@
 {% block content %}
     <h1>Привет, {{ current_user.username }}!</h1>
     {% for post in posts %}
-    <div><p>{{ post.author.username}} сказал: <b>{{ post.body }}</b></p></div>
+    <div><p>{{ post.author.username}}: <b>{{ post.body }}</b></p></div>
     {% endfor %}
 {% endblock %}
