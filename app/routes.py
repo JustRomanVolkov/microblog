@@ -10,7 +10,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from urllib.parse import urlsplit
 
 # Собственные модули
-from app import app, db, routes, models, errors
+from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.models import User
 
@@ -187,7 +187,7 @@ def edit_profile():
           Redirect: Если пользователь не аутентифицирован, то перенаправляет его на страницу входа.
     """
     # Создаем экземпляр формы редактирования профиля пользователя
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
 
     if form.validate_on_submit():
         # Сохранение изменений профиля пользователя
