@@ -22,6 +22,8 @@ class User(UserMixin, db.Model):
     username: str = db.Column(db.String(64), index=True, unique=True)
     email: str = db.Column(db.String(120), index=True, unique=True)
     password_hash: str = db.Column(db.String(128))
+    about_me: str = db.Column(db.String(140))
+    last_seen: datetime = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Для отношений «один ко многим».
     # Аргумент backref определяет имя поля добавленное к объектам класса «много», для указания на объект «один».
