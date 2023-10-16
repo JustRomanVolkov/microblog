@@ -2,6 +2,7 @@
 
 # Стандартные библиотеки Python
 from typing import List, Dict, Union
+from datetime import datetime
 
 # Библиотеки третьей стороны
 from flask import render_template, flash, redirect, url_for, Response, request
@@ -12,6 +13,21 @@ from urllib.parse import urlsplit
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
+
+
+@app.before_request
+def before_request() -> None:
+    """
+    Функция, выполняемая перед каждым запросом к приложению.
+
+    Обновляет поле 'last_seen' для текущего пользователя, если он аутентифицирован.
+
+    Returns:
+        None
+    """
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 
 @app.route('/')
