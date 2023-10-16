@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 
 # Собственные модули
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.models import User
 
 
@@ -168,3 +168,37 @@ def user(username):
         {'author': user, 'body': 'Test post #2'}
     ]
     return render_template('user.html', user=user, posts=posts)
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    """
+    Обработчик маршрута для редактирования профиля пользователя.
+
+    GET-запрос отображает форму редактирования профиля.
+    POST-запрос обрабатывает данные формы и сохраняет их в профиль пользователя
+
+    Returns:
+         str: Возвращает шаблон HTML для отображения формы редактирования
+              и перенаправляет на ту же страницу, чтобы отобразить результат сохранения.
+
+    Raises:
+          Redirect: Если пользователь не аутентифицирован, то перенаправляет его на страницу входа.
+    """
+    # Создаем экземпляр формы редактирования профиля пользователя
+    form = EditProfileForm()
+
+    if form.validate_on_submit():
+        # Сохранение изменений профиля пользователя
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Ваши изменения сохранены')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        # Заполнение полей формы текущими данными профиля пользователя
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+
+    return render_template('edit_profile.html', title='Редактирование профиля', form=form)

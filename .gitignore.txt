@@ -2,29 +2,26 @@
 .DS_Store
 
 # Игнорировать виртуальное окружение Python (в зависимости от названия)
-venv/
-venv library root/
-env/
-.venv/
-.venv3/
+/venv/
+/venv library root/
+/env/
+/.venv/
+/.venv3/
 
-# Игнорировать файлы, созданные IDE и редакторами кода (примеры)
-.idea/
-.vscode/
-*.pyc
+# Игнорировать файлы, созданные IDE и редакторами кода
+/.idea/
+/.vscode/
+*.py[cod]
 
 # Игнорировать логи и временные файлы
-logs/
+/logs/
 *.log
 *.log.*
 *.tmp
 *.swp
 
-# Игнорировать файлы с личной информацией (например, файл с паролями)
+# Игнорировать файлы с личной информацией
 config.py
-
-
-*.py[cod]
 
 # C extensions
 *.so
@@ -32,26 +29,26 @@ config.py
 # Packages
 *.egg
 *.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
-lib
-lib64
-__pycache__
+/dist/
+/build/
+/eggs/
+/parts/
+/bin/
+/var/
+/sdist/
+/develop-eggs/
+/.installed.cfg/
+/lib/
+/lib64/
+/__pycache__/
 
 # Installer logs
 pip-log.txt
 
 # Unit test / coverage reports
-.coverage
-.tox
-nosetests.xml
+/.coverage
+/.tox
+/nosetests.xml
 
 # Translations
 *.mo
@@ -61,5 +58,4 @@ nosetests.xml
 .project
 .pydevproject
 
-venv
-microblog.log*
+/microblog.log*
