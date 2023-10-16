@@ -10,7 +10,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from urllib.parse import urlsplit
 
 # Собственные модули
-from app import app, db
+from app import app, db, routes, models, errors
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.models import User
 
