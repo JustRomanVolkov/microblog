@@ -77,10 +77,44 @@ class EditProfileForm(FlaskForm):
     Класс формы редактирования профиля.
 
     Attributes:
-        username (StringField): Поле для изменения имени пользователя.
-        about_me (TextAreaField): Поле для изменения описания информации о пользователе.
-        submit (SubmitField): Кнопка для отправки данных формы
+        username (StringField): Поле изменения имени пользователя.
+        about_me (TextAreaField): Поле изменения описания информации о пользователе.
+        submit (SubmitField): Кнопка отправки данных формы.
+
+    Methods:
+        __init__(self, original_username, *args, **kwargs):
+            Конструктор класса формы.
+
+        validate_username(self, username: StringField):
+            Метод для валидации имени пользователя.
     """
     username: StringField = StringField('Имя пользователя', validators=[DataRequired()])
     about_me: TextAreaField = TextAreaField('Обо мне', validators=[Length(min=0, max=140)])
     submit: SubmitField = SubmitField('Принять изменения')
+
+    def __init__(self, original_username: str, *args, **kwargs):
+        """
+        Инициализирует форму редактирования профиля.
+
+        Args:
+            original_username (str): Оригинальное имя пользователя.
+            *args: Позиционные аргументы FlaskForm.
+            **kwargs: Именованные аргументы FlaskForm.
+        """
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.original_username = original_username
+
+    def validate_username(self, username: StringField):
+        """
+        Проверяет уникальность имени пользователя.
+
+        Args:
+            username (StringField): Поле с введенным именем пользователя.
+
+        Raises:
+            ValidationError: Вызывается, если пользователь с таким именем уже существует в базе данных.
+        """
+        if username.data != self.original_username:
+            user = User.query.filter_by(username=self.username.data).first()
+            if user is not None:
+                raise ValidationError('Пожалуйста, используйте другое имя для пользователя. Это имя уже занято.')
