@@ -12,6 +12,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Собственные модули
 from app import db, login
 
+# Таблица followers моделирует отношения "подписчик - подписан на" между пользователями.
+# Она используется для отслеживания того, какие пользователи подписаны на каких других пользователей.
+# Столбец 'follower_id' представляет пользователя, который подписывается на других пользователей,
+# Столбец 'followed_id' представляет пользователя, на которого подписаны.
+followers = db.Table('followers',
+                     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+                     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+                     )
+
 
 class User(UserMixin, db.Model):
     """
@@ -24,6 +33,11 @@ class User(UserMixin, db.Model):
     password_hash: str = db.Column(db.String(128))
     about_me: str = db.Column(db.String(140))
     last_seen: datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    followed = db.relationship(
+        'User', secondary=followers,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
 
     # Для отношений «один ко многим».
     # Аргумент backref определяет имя поля добавленное к объектам класса «много», для указания на объект «один».
@@ -65,6 +79,38 @@ class User(UserMixin, db.Model):
         """
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+
+    def is_following(self, user: 'User') -> bool:
+        """
+        Проверить, подписан ли текущий пользователь на указанного пользователя.
+
+        Args:
+            user (User): Пользователь, наличие подписки на которого нужно проверить.
+
+        Returns:
+            bool: True, если текущий пользователь подписан на указанного пользователя, в противном случае False.
+        """
+        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+
+    def follow(self, user: 'User') -> None:
+        """
+        Начать подписку на указанного пользователя.
+
+        Args:
+            user (User): Пользователь, на которого нужно подписаться.
+        """
+        if not self.is_folloving(user):
+            self.followed.append(user)
+
+    def unfollow(self, user: 'User') -> None:
+        """
+        Прекратить подписку на указанного пользователя.
+
+        Args:
+            user (User): Пользователь, от которого нужно отписаться.
+        """
+        if not self.is_folloving(user):
+            self.followed.remove(user)
 
 
 class Post(db.Model):
