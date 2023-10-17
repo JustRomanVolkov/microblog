@@ -6,7 +6,7 @@ from datetime import datetime
 # Библиотеки третьей стороны
 from flask_login import UserMixin
 from hashlib import md5
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Query
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Собственные модули
@@ -111,6 +111,19 @@ class User(UserMixin, db.Model):
         """
         if not self.is_folloving(user):
             self.followed.remove(user)
+
+    def followed_posts(self) -> Query:
+        """
+        Получить посты, на которые подписан текущий пользователь, включая свои.
+
+        Returns:
+            Query: Запрос к базе данных, возвращающий посты, упорядоченные по времени (сначала новые).
+        """
+        followed = Post.query.join(
+            followers, (followers.c.followed_id == Post.user_id)).filter(
+                followers.c.follower_id == self.id)
+        own = Post.query.filter_by(user_id=self.id)
+        return followed.union(own).order_by(Post.timestamp.desc())
 
 
 class Post(db.Model):
