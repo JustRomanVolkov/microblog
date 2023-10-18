@@ -45,6 +45,7 @@ def index() -> str:
         - Пользователь должен быть авторизован (вошел в систему) для доступа к этому маршруту.
         - Если запрос выполняется методом POST (отправка формы), создается новый пост, и пользователь
           перенаправляется на главную страницу.
+        - Список постов на главной странице пагинируется, и пользователь может переключаться между страницами.
 
     """
     form = PostForm()
@@ -70,6 +71,17 @@ def index() -> str:
 @app.route('/explore')
 @login_required
 def explore():
+    """
+    Маршрут для страницы "Поиск".
+
+    Returns:
+        str: HTML-страница с постами, отсортированными по времени (сначала новые).
+
+    Notes:
+        - Этот маршрут доступен только для авторизованных пользователей (пользователей, которые вошли в систему).
+        - Список постов на странице "Поиск" также пагинируется, и пользователь может переключаться между страницами.
+
+    """
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=app.config["TICKERS_PER_PAGE"], error_out=False)
@@ -128,7 +140,18 @@ def login() -> Union[str, 'Response']:
 
 
 @app.route('/logout')
-def logout():
+def logout() -> str:
+    """
+    Маршрут для выхода из системы (логаут).
+
+    Returns:
+        str: Перенаправление на главную страницу приложения после успешного выхода из системы.
+
+    Notes:
+        - Этот маршрут позволяет пользователю выйти из своей учетной записи (системы).
+        - После успешного выхода из системы, пользователь перенаправляется на главную страницу.
+
+    """
     logout_user()
     return redirect(url_for('index'))
 
@@ -168,27 +191,32 @@ def register() -> Union[str, 'Response']:
 
 @app.route('/user/<username>')
 @login_required
-def user(username):
+def user(username: str) -> str:
     """
-    Обработчик маршрута для отображения профиля пользователя.
+    Обработчик маршрута для отображения профиля пользователя и его постов.
 
     Args:
-        username (str): Имя пользователя, чьей профиль нужно отобразить.
+        username (str): Имя пользователя, чей профиль нужно отобразить.
 
     Returns:
         str: Возвращает шаблон HTML с информацией о пользователе и их постах.
+
+    Notes:
+        - Этот маршрут доступен только для авторизованных пользователей (пользователей, которые вошли в систему).
+        - Пользователь, чьей страницей является профиль, и его посты отображаются на странице.
+        - Список постов на странице профиля пагинируется, и пользователь может переключаться между страницами.
 
     Raises:
         404 Not Found: Если пользователь с указанным именем не найден.
     """
     user = User.query.filter_by(username=username).first_or_404()
-
-    # Заглушка для постов пользователя (замените этот список на данные из вашей базы данных)
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
-    return render_template('user.html', user=user, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=app.config["TICKERS_PER_PAGE"], error_out=False)
+    next_url = url_for('user', username=user.username, page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) if posts.has_prev else None
+    return render_template('user.html', user=user, posts=posts.items,
+                           next_url=next_url, prev_url=prev_url)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
