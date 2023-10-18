@@ -163,6 +163,7 @@ class User(UserMixin, db.Model):
             return
         return User.query.get(id)
 
+
 class Post(db.Model):
     """
     Модель поста для базы данных.

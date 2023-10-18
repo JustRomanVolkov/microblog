@@ -12,7 +12,8 @@ from urllib.parse import urlsplit
 # Собственные модули
 from app import app, db
 from app.email import send_password_reset_email
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm, \
+    ResetPasswordForm
 from app.models import User, Post
 
 
@@ -316,7 +317,7 @@ def unfollow(username):
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
-def reset_password_request()-> Union[str, Response]:
+def reset_password_request() -> Union[str, Response]:
     """
     Обработчик маршрута для запроса сброса пароля.
 
@@ -359,3 +360,32 @@ def reset_password_request()-> Union[str, Response]:
     # Отображаем HTML-страницу с формой
     return render_template('reset_password_request.html',
                            title='Reset Password', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token: str) -> Union[str, 'Response']:
+    """
+    Обработчик маршрута для сброса пароля с использованием токена.
+
+    Args:
+        token (str): Токен сброса пароля.
+
+    Returns:
+        Union[str, Response]: HTML-страница для сброса пароля или перенаправление.
+
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))  # Перенаправление, если пользователь уже аутентифицирован
+
+    user = User.verify_reset_password_token(token)  # Проверка токена и получение пользователя
+    if not user:
+        return redirect(url_for('index'))  # Перенаправление, если токен недействителен
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():  # Если форма отправлена и прошла валидацию
+        user.set_password(form.password.data)  # Установка нового пароля пользователю
+        db.session.commit()  # Сохранение изменений в базе данных
+        flash('Your password has been reset.')  # Вывод сообщения пользователю
+        return redirect(url_for('login'))  # Перенаправление на страницу входа
+
+    return render_template('reset_password.html', form=form)  # Отображение HTML-страницы для сброса пароля

@@ -144,3 +144,19 @@ class ResetPasswordRequestForm(FlaskForm):
     """
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Запрос сброса пароля')
+
+
+class ResetPasswordForm(FlaskForm):
+    """
+    Форма для сброса пароля пользователя.
+
+    Attributes:
+        password (PasswordField): Поле для ввода нового пароля.
+        password2 (PasswordField): Поле для повторного ввода пароля с проверкой на совпадение.
+        submit (SubmitField): Кнопка для отправки запроса сброса пароля.
+
+    """
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
