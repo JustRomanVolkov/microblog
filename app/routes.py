@@ -57,9 +57,21 @@ def index() -> str:
             db.session.commit()
             flash('Ваш пост опубликован.')
             return redirect(url_for('index'))
-    posts = current_user.followed_posts().all()
-    # Отображение главной страницы с постами.
-    return render_template('index.html', title='Главная страница', form=form, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = current_user.followed_posts().paginate(
+        page=page, per_page=app.config["TICKERS_PER_PAGE"], error_out=False)
+
+    return render_template('index.html', title='Home', form=form,
+                           posts=posts.items)
+
+
+@app.route('/explore')
+@login_required
+def explore():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=app.config["TICKERS_PER_PAGE"], error_out=False)
+    return render_template('index.html', title='Поиск', posts=posts.items)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -267,10 +279,3 @@ def unfollow(username):
     db.session.commit()
     flash(f"Вы отписались от {username}.")
     return redirect(url_for('user', username=username))
-
-
-@app.route('/explore')
-@login_required
-def explore():
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template('index.html', title='Поиск', posts=posts)
