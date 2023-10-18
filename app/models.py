@@ -99,7 +99,7 @@ class User(UserMixin, db.Model):
         Args:
             user (User): Пользователь, на которого нужно подписаться.
         """
-        if not self.is_folloving(user):
+        if not self.is_following(user):
             self.followed.append(user)
 
     def unfollow(self, user: 'User') -> None:
@@ -109,7 +109,7 @@ class User(UserMixin, db.Model):
         Args:
             user (User): Пользователь, от которого нужно отписаться.
         """
-        if not self.is_folloving(user):
+        if self.is_following(user):
             self.followed.remove(user)
 
     def followed_posts(self) -> Query:

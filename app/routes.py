@@ -202,3 +202,64 @@ def edit_profile():
         form.about_me.data = current_user.about_me
 
     return render_template('edit_profile.html', title='Редактирование профиля', form=form)
+
+
+@app.route('/follow/<username>')
+@login_required
+def follow(username: str) -> Response:
+    """
+    Обработчик маршрута для подписки на другого пользователя.
+
+    Args:
+        username (str): Имя пользователя, на которого нужно подписаться.
+
+    Returns:
+        Response: HTTP-ответ, перенаправляющий пользователя на страницу профиля.
+
+    Notes:
+        - Этот маршрут доступен только для авторизованных пользователей (пользователей, которые вошли в систему).
+        - Если указанный пользователь не существует, выводится сообщение об ошибке.
+        - Пользователь не может подписаться на самого себя.
+
+    """
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash(f"Пользователь {username} не найден.")
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash(f"Вы не можете подписаться на себя.")
+        return redirect(url_for('user', username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash(f"Вы подписались на {username}.")
+    return redirect(url_for('user', username=username))
+
+
+@app.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    """
+    Обработчик маршрута для отписки от другого пользователя.
+
+    Args:
+        username (str): Имя пользователя, от которого нужно отписаться.
+
+    Returns:
+        Response: HTML-ответ, перенаправляющий пользователя на страницу профиля.
+
+    Notes:
+        - Этот маршрут доступен только для авторизованных пользователей (пользователей, которые вошли в систему).
+        - Если указанный пользователь не существует, выводится сообщение об ошибке.
+        - Пользователь не может подписаться на самого себя.
+    """
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash(f"Пользователь {username} не найден.")
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash(f"Вы не можете отписаться от себя.")
+        return redirect(url_for('user', username=username))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash(f"Вы отписались от {username}.")
+    return redirect(url_for('user', username=username))
