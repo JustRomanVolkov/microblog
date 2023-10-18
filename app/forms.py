@@ -117,4 +117,18 @@ class EditProfileForm(FlaskForm):
         if username.data != self.original_username:
             user = User.query.filter_by(username=self.username.data).first()
             if user is not None:
-                raise ValidationError('Пожалуйста, используйте другое имя для пользователя. Это имя уже занято.')
+                raise ValidationError("Пожалуйста, используйте другое имя для пользователя. Это имя уже занято.")
+
+
+class PostForm(FlaskForm):
+
+    """
+    Форма создания новых постов.
+
+    Attributes:
+        post (TextAreaField): Поле для ввода текста поста. Обязательное поле.
+        submit (SubmitField): Кнопка для отправки поста.
+    """
+    post = TextAreaField("Напишите что-нибудь", validators=[
+        DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField("Отправить")

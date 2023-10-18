@@ -11,8 +11,8 @@ from urllib.parse import urlsplit
 
 # Собственные модули
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import User
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
+from app.models import User, Post
 
 
 @app.before_request
@@ -30,32 +30,36 @@ def before_request() -> None:
         db.session.commit()
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index() -> str:
     """
-    Отображение главной страницы.
+    Маршрут для главной страницы приложения.
 
     Returns:
-        str: HTML-код главной страницы.
+        str: HTML-страница с главной страницей приложения.
+
+    Notes:
+        - Этот маршрут доступен как для GET, так и для POST запросов.
+        - Пользователь должен быть авторизован (вошел в систему) для доступа к этому маршруту.
+        - Если запрос выполняется методом POST (отправка формы), создается новый пост, и пользователь
+          перенаправляется на главную страницу.
+
     """
-    posts: List[Dict[str, Union[Dict[str, str], str]]] = [
-        {
-            'author': {'username': 'Олег'},
-            'body': 'Всем привет!'
-        },
-        {
-            'author': {'username': 'Маша'},
-            'body': 'Всем чмоки в этом чатике'
-        },
-        {
-            'author': {'username': 'Петя'},
-            'body': 'Дароу!'
-        }
-    ]
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        form = PostForm()
+        if form.validate_on_submit():
+            post = Post(body=form.post.data, author=current_user)
+            db.session.add(post)
+            db.session.commit()
+            flash('Ваш пост опубликован.')
+            return redirect(url_for('index'))
+    posts = current_user.followed_posts().all()
     # Отображение главной страницы с постами.
-    return render_template('index.html', title='Главная страница', posts=posts)
+    return render_template('index.html', title='Главная страница', form=form, posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
