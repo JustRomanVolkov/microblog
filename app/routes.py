@@ -316,7 +316,7 @@ def unfollow(username):
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
-def reset_password_request():
+def reset_password_request()-> Union[str, Response]:
     """
     Обработчик маршрута для запроса сброса пароля.
 

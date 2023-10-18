@@ -3,25 +3,51 @@
 # Стандартные библиотеки Python
 
 # Библиотеки третьей стороны
+from flask import render_template
 from flask_mail import Message
 
+
 # Собственные модули
-from app import mail
+from app import app, mail
 
 
-def send_email(subject, sender, recipients, text_body, html_body):
+def send_email(subject: str, sender: str, recipients: list, text_body: str, html_body: str) -> None:
     """
-    Отправляет электронное письмо с заданными параметрами.
+    Отправляет электронное письмо.
 
-    :param subject: Тема письма (строка)
-    :param sender: Отправитель письма (строка)
-    :param recipients: Список получателей (список строк)
-    :param text_body: Текстовое тело письма (строка)
-    :param html_body: HTML-тело письма (строка)
+    Args:
+        subject (str): Тема письма.
+        sender (str): Адрес отправителя.
+        recipients (list): Список адресов получателей.
+        text_body (str): Текстовое содержимое письма.
+        html_body (str): HTML-содержимое письма.
 
-    :return: Ничего не возвращает.
+    Returns:
+        None
     """
     msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
     msg.html = html_body
+    # Предполагается, что у вас есть объект mail для отправки писем
     mail.send(msg)
+
+
+def send_password_reset_email(user: 'User') -> None:
+    """
+    Отправляет письмо для сброса пароля пользователю.
+
+    Args:
+        user (User): Пользователь, которому отправляется письмо.
+
+    Returns:
+        None
+
+    """
+    token = user.get_reset_password_token()
+    send_email('[Microblog] Reset Your Password',
+               sender=app.config['ADMINS'][0],
+               recipients=[user.email],
+               text_body=render_template('email/reset_password.txt',
+                                         user=user, token=token),
+               html_body=render_template('email/reset_password.html',
+                                         user=user, token=token))
