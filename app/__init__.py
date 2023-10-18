@@ -5,6 +5,7 @@ import os
 import logging
 from flask import Flask
 from flask_login import LoginManager
+from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import SMTPHandler, RotatingFileHandler
@@ -17,6 +18,9 @@ app = Flask(__name__)
 
 # Загружаем настройки из объекта конфигурации.
 app.config.from_object(Config)
+
+# Создаем экземпляр Mail.
+mail = Mail(app)
 
 # Инициализация SQLAlchemy для работы с базой данных.
 db: SQLAlchemy = SQLAlchemy(app)

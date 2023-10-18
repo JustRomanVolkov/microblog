@@ -2,15 +2,18 @@
 
 # Стандартные библиотеки Python
 from datetime import datetime
+from time import time
+from typing import Union
 
 # Библиотеки третьей стороны
+import jwt
 from flask_login import UserMixin
 from hashlib import md5
 from sqlalchemy.orm import relationship, Query
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Собственные модули
-from app import db, login
+from app import app, db, login
 
 # Таблица followers моделирует отношения "подписчик - подписан на" между пользователями.
 # Она используется для отслеживания того, какие пользователи подписаны на каких других пользователей.
@@ -124,6 +127,41 @@ class User(UserMixin, db.Model):
                 followers.c.follower_id == self.id)
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
+
+    def get_reset_password_token(self, expires_in: int = 600) -> str:
+        """
+        Генерирует токен сброса пароля для пользователя.
+
+        Args:
+            expires_in (int): Время жизни токена в секундах. По умолчанию 600 секунд (10 минут).
+
+        Returns:
+            str: Сгенерированный токен сброса пароля в формате строки.
+
+        """
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token: str) -> Union[None, 'User']:
+
+        """
+        Проверяет токен сброса пароля и возвращает соответствующего пользователя.
+
+        Args:
+            token (str): Токен сброса пароля.
+
+        Returns:
+            Union[None, User]: Возвращает пользователя, связанного с токеном, или None, если токен недействителен.
+
+        """
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
 
 class Post(db.Model):

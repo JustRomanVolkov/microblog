@@ -11,7 +11,9 @@ from urllib.parse import urlsplit
 
 # Собственные модули
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
+from app.email import send_password_reset_email
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm, \
+    ResetPasswordForm
 from app.models import User, Post
 
 
@@ -312,3 +314,78 @@ def unfollow(username):
     db.session.commit()
     flash(f"Вы отписались от {username}.")
     return redirect(url_for('user', username=username))
+
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request() -> Union[str, Response]:
+    """
+    Обработчик маршрута для запроса сброса пароля.
+
+    Methods:
+        - GET: Отображает форму запроса сброса пароля.
+        - POST: Обрабатывает запрос на сброс пароля.
+
+    Если пользователь аутентифицирован, он будет перенаправлен на страницу 'index'.
+    В противном случае, отображается форма для ввода email-адреса.
+    Если форма заполнена и введенный email найден в базе данных, отправляется email с инструкциями по сбросу пароля.
+    После этого пользователь перенаправляется на страницу 'login'.
+
+    Args:
+        None
+
+    Returns:
+        GET: HTML-страница с формой запроса сброса пароля.
+        POST: Перенаправление пользователя после отправки запроса.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    # Создаем экземпляр формы
+    form = ResetPasswordRequestForm()
+
+    # Если форма отправлена и прошла валидацию
+    if form.validate_on_submit():
+        # Ищем пользователя по email
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            # Отправляем email с инструкциями по сбросу пароля
+            send_password_reset_email(user)
+
+        # Выводим сообщение пользователю
+        flash('Проверьте почту и следуйте инструкция для сброса пароля.')
+
+        # Перенаправляем пользователя на страницу 'login'
+        return redirect(url_for('login'))
+
+    # Отображаем HTML-страницу с формой
+    return render_template('reset_password_request.html',
+                           title='Reset Password', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token: str) -> Union[str, 'Response']:
+    """
+    Обработчик маршрута для сброса пароля с использованием токена.
+
+    Args:
+        token (str): Токен сброса пароля.
+
+    Returns:
+        Union[str, Response]: HTML-страница для сброса пароля или перенаправление.
+
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))  # Перенаправление, если пользователь уже аутентифицирован
+
+    user = User.verify_reset_password_token(token)  # Проверка токена и получение пользователя
+    if not user:
+        return redirect(url_for('index'))  # Перенаправление, если токен недействителен
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():  # Если форма отправлена и прошла валидацию
+        user.set_password(form.password.data)  # Установка нового пароля пользователю
+        db.session.commit()  # Сохранение изменений в базе данных
+        flash('Your password has been reset.')  # Вывод сообщения пользователю
+        return redirect(url_for('login'))  # Перенаправление на страницу входа
+
+    return render_template('reset_password.html', form=form)  # Отображение HTML-страницы для сброса пароля
