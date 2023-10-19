@@ -22,11 +22,11 @@ app = Flask(__name__)
 # Загружаем настройки из объекта конфигурации.
 app.config.from_object(Config)
 
-# Создаем экземпляр Mail.
-mail = Mail(app)
-
 # Инициализация SQLAlchemy для работы с базой данных.
 db: SQLAlchemy = SQLAlchemy(app)
+
+# Инициализация Flask-Migrate для миграции базы данных.
+migrate: Migrate = Migrate(app, db)
 
 # Инициализация Flask-Login для управления аутентификацией.
 login: LoginManager = LoginManager(app)
@@ -36,8 +36,8 @@ login: LoginManager = LoginManager(app)
 login.login_view = 'login'
 login.login_message = "Пожалуйста, войдите, чтобы открыть эту страницу."
 
-# Инициализация Flask-Migrate для миграции базы данных.
-migrate: Migrate = Migrate(app, db)
+# Создаем экземпляр Mail.
+mail = Mail(app)
 
 # Инициализация Flask-bootstrap для создания красивого и отзывчивого пользовательского интерфейса.
 bootstrap = Bootstrap(app)
@@ -56,8 +56,7 @@ if not app.debug:
             toaddrs=app.config['ADMINS'],
             subject='Microblog Failure',
             credentials=auth,
-            secure=secure
-        )
+            secure=secure)
 
     # Если папка 'logs' не существует, создаем ее.
     if not os.path.exists('logs'):

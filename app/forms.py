@@ -120,8 +120,18 @@ class EditProfileForm(FlaskForm):
                 raise ValidationError("Пожалуйста, используйте другое имя для пользователя. Это имя уже занято.")
 
 
-class PostForm(FlaskForm):
+class EmptyForm(FlaskForm):
+    """
+    Пустая форма с кнопкой "Submit".
 
+    Attributes:
+        submit (SubmitField): Кнопка для отправки формы.
+
+    """
+    submit: SubmitField = SubmitField('Submit')
+
+
+class PostForm(FlaskForm):
     """
     Форма создания новых постов.
 
@@ -159,4 +169,4 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Request Password Reset')
+    submit = SubmitField('Запрос сброса пароля')
