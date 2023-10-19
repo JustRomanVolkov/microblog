@@ -4,6 +4,7 @@ import os
 # Библиотеки третьей стороны
 import logging
 from flask import Flask
+from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -34,6 +35,8 @@ login.login_view = 'login'
 # Инициализация Flask-Migrate для миграции базы данных.
 migrate: Migrate = Migrate(app, db)
 
+# Инициализация Flask-bootstrap для создания красивого и отзывчивого пользовательского интерфейса.
+bootstrap = Bootstrap(app)
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
