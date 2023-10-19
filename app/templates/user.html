@@ -39,7 +39,7 @@
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
-    <nav aria-lbel="...">
+    <nav aria-label="...">
         <ul class="pager">
             <li class="previous{% if prev_url %} disabled {% endif %}">
                 <a href="{{ prev_url or '#' }}">
