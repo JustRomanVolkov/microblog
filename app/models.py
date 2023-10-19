@@ -145,7 +145,6 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     def verify_reset_password_token(token: str) -> Union[None, 'User']:
-
         """
         Проверяет токен сброса пароля и возвращает соответствующего пользователя.
 
