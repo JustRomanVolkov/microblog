@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Стандартные библиотеки Python
 import os
 
@@ -28,9 +30,11 @@ db: SQLAlchemy = SQLAlchemy(app)
 
 # Инициализация Flask-Login для управления аутентификацией.
 login: LoginManager = LoginManager(app)
+
 # Определения URL-адреса страницы для перенаправления на вход в систему
 # Значение «login» выше является именем функции
 login.login_view = 'login'
+login.login_message = "Пожалуйста, войдите, чтобы открыть эту страницу."
 
 # Инициализация Flask-Migrate для миграции базы данных.
 migrate: Migrate = Migrate(app, db)
