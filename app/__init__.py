@@ -10,6 +10,7 @@ from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
+from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
@@ -41,6 +42,10 @@ mail = Mail(app)
 
 # Инициализация Flask-bootstrap для создания красивого и отзывчивого пользовательского интерфейса.
 bootstrap = Bootstrap(app)
+
+# Создаем экземпляр Flask-Moment и связываем его с Flask-приложением.
+moment = Moment(app)
+
 
 if not app.debug:
     if app.config['MAIL_SERVER']:

@@ -51,3 +51,9 @@
         {% endblock app_content %}
     </div>
 {% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('ru') }}     <!-- для русских слов -->
+{% endblock %}
