@@ -10,7 +10,7 @@
                 {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
 
                 {% if user.last_seen %}
-                    <p>Последнее посещение: {{ user.last_seen }}</p>
+                    <p>Последнее посещение: {{ moment(user.last_seen).format('LLL') }}</p>
                 {% endif %}
 
                 <p>{{ user.followers.count() }} подписчиков, {{ user.followed.count() }} подписок</p>
