@@ -6,6 +6,7 @@ from datetime import datetime
 
 # Библиотеки третьей стороны
 from flask import render_template, flash, redirect, url_for, Response, request
+from flask_babel import Babel, gettext as _
 from flask_login import current_user, login_user, logout_user, login_required
 from urllib.parse import urlsplit
 
@@ -57,7 +58,7 @@ def index() -> str:
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash('Ваш пост опубликован.')
+        flash(_('Ваш пост опубликован.'))
         return redirect(url_for('index'))
 
     page = request.args.get('page', 1, type=int)
@@ -119,7 +120,7 @@ def login() -> Union[str, 'Response']:
 
         # Проверка правильности имени пользователя и пароля.
         if user is None or not user.check_password(form.password.data):
-            flash('Не верное имя пользователя или пароль')
+            flash(_('Не верное имя пользователя или пароль'))
             return redirect(url_for('login'))
 
         # Вход пользователя в систему.
@@ -184,7 +185,7 @@ def register() -> Union[str, 'Response']:
         db.session.add(user)
         db.session.commit()
 
-        flash('Поздравляем, вы зарегистрированы! Теперь вы можете войти в систему.')
+        flash(_('Поздравляем, вы зарегистрированы! Теперь вы можете войти в систему.'))
         return redirect(url_for('login'))
 
     # Отображение формы регистрации
@@ -246,7 +247,7 @@ def edit_profile() -> Union[str, Response]:
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Ваши изменения сохранены')
+        flash(_('Ваши изменения сохранены'))
         return redirect(url_for('edit_profile'))
 
     elif request.method == 'GET':
@@ -280,16 +281,16 @@ def follow(username: str) -> Response:
     if form.validate_on_submit():  # Если форма отправлена
         user = User.query.filter_by(username=username).first()  # Ищем пользователя по имени
         if user is None:
-            flash(f"Пользователь {username} не найден.")
+            flash(_(f"Пользователь {username} не найден."))
             return redirect(url_for('index'))
 
         if user == current_user:
-            flash(f"Вы не можете подписаться на себя.")
+            flash(_(f"Вы не можете подписаться на себя."))
             return redirect(url_for('user', username=username))
 
         current_user.follow(user)  # Вызываем метод подписки текущего пользователя на другого
         db.session.commit()  # Сохраняем изменения в базе данных
-        flash(f"Вы подписались на {username}.")
+        flash(_(f"Вы подписались на {username}."))
         # Перенаправляем на страницу пользователя, на которого подписались
         return redirect(url_for('user', username=username))
     else:
@@ -317,16 +318,16 @@ def unfollow(username: str) -> Response:
     if form.validate_on_submit():
         user = User.query.filter_by(username=username).first()
         if user is None:
-            flash(f"Пользователь {username} не найден.")
+            flash(_(f"Пользователь {username} не найден."))
             return redirect(url_for('index'))
 
         if user == current_user:
-            flash(f"Вы не можете отписаться от себя.")
+            flash(_(f"Вы не можете отписаться от себя."))
             return redirect(url_for('user', username=username))
 
         current_user.unfollow(user)
         db.session.commit()
-        flash(f"Вы отписались от {username}.")
+        flash(_(f"Вы отписались от {username}."))
         return redirect(url_for('user', username=username))
     else:
         return redirect(url_for('index'))
@@ -368,7 +369,7 @@ def reset_password_request() -> Union[str, Response]:
             send_password_reset_email(user)
 
         # Выводим сообщение пользователю
-        flash('Проверьте почту и следуйте инструкция для изменения пароля.')
+        flash(_('Проверьте почту и следуйте инструкция для изменения пароля.'))
 
         # Перенаправляем пользователя на страницу 'login'
         return redirect(url_for('login'))
@@ -401,7 +402,7 @@ def reset_password(token: str) -> Union[str, 'Response']:
     if form.validate_on_submit():  # Если форма отправлена и прошла валидацию
         user.set_password(form.password.data)  # Установка нового пароля пользователю
         db.session.commit()  # Сохранение изменений в базе данных
-        flash('Ваш пароль был изменен.')  # Вывод сообщения пользователю
+        flash(_('Ваш пароль был изменен.'))  # Вывод сообщения пользователю
         return redirect(url_for('login'))  # Перенаправление на страницу входа
 
     return render_template('reset_password.html', form=form)  # Отображение HTML-страницы для сброса пароля
