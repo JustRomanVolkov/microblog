@@ -5,7 +5,8 @@ import os
 
 # Библиотеки третьей стороны
 import logging
-from flask import Flask
+from flask import Flask, request
+from flask_babel import Babel, lazy_gettext as _l
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -29,13 +30,32 @@ db: SQLAlchemy = SQLAlchemy(app)
 # Инициализация Flask-Migrate для миграции базы данных.
 migrate: Migrate = Migrate(app, db)
 
+
+def get_locale():
+    """
+    Функция для явного установления текущего языка приложения.
+
+    В данном случае, функция всегда возвращает язык 'ru', что означает, что
+    приложение будет работать на русском языке.
+
+    :return: Возвращает строку, представляющую выбранный язык (в данном случае 'ru').
+    """
+    # return request.accept_languages.best_match(app.config['BABEL_LANGUAGES'])
+    return 'ru'
+
+
+# Инициализация Flask-Babel для интернационализации и локализации.
+babel: Babel = Babel(app)
+babel.init_app(app, locale_selector=get_locale)
+
+
 # Инициализация Flask-Login для управления аутентификацией.
 login: LoginManager = LoginManager(app)
 
 # Определения URL-адреса страницы для перенаправления на вход в систему
 # Значение «login» выше является именем функции
 login.login_view = 'login'
-login.login_message = "Пожалуйста, войдите, чтобы открыть эту страницу."
+login.login_message = _l("Пожалуйста, войдите, чтобы открыть эту страницу.")
 
 # Создаем экземпляр Mail.
 mail = Mail(app)

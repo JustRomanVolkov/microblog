@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Библиотеки третьей стороны
+from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
@@ -19,10 +20,10 @@ class LoginForm(FlaskForm):
         remember_me (BooleanField): Флажок "Запомнить меня".
         submit (SubmitField): Кнопка "Войти".
     """
-    username: StringField = StringField('Имя пользователя', validators=[DataRequired()])
-    password: PasswordField = PasswordField('Пароль', validators=[DataRequired()])
-    remember_me: BooleanField = BooleanField('Запомни меня')
-    submit: SubmitField = SubmitField('Войти')
+    username: StringField = StringField(_l('Имя пользователя'), validators=[DataRequired()])
+    password: PasswordField = PasswordField(_l('Пароль'), validators=[DataRequired()])
+    remember_me: BooleanField = BooleanField(_l('Запомни меня'))
+    submit: SubmitField = SubmitField(_l('Войти'))
 
 
 class RegistrationForm(FlaskForm):
@@ -36,12 +37,12 @@ class RegistrationForm(FlaskForm):
         password2 (PasswordField): Поле для повторного ввода пароля.
         submit (SubmitField): Кнопка "Регистрация".
     """
-    username: StringField = StringField('Имя пользователя', validators=[DataRequired()])
-    email: StringField = StringField('Почта', validators=[DataRequired(), Email()])
-    password: PasswordField = PasswordField('Пароль', validators=[DataRequired()])
-    password2: PasswordField = PasswordField(
-        'Повтор пароля', validators=[DataRequired(), EqualTo('password')])
-    submit: SubmitField = SubmitField('Регистрация')
+    username: StringField = StringField(_l('Имя пользователя'), validators=[DataRequired()])
+    email: StringField = StringField(_l('Почта'), validators=[DataRequired(), Email()])
+    password: PasswordField = PasswordField(_l('Пароль'), validators=[DataRequired()])
+    password2: PasswordField = PasswordField(_l('Повтор пароля'),
+                                             validators=[DataRequired(), EqualTo('password')])
+    submit: SubmitField = SubmitField(_l('Регистрация'))
 
     def validate_username(self, username):
         """
@@ -55,7 +56,7 @@ class RegistrationForm(FlaskForm):
         """
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
-            raise ValidationError('Используйте другое имя.')
+            raise ValidationError(_l('Используйте другое имя.'))
 
     def validate_email(self, email):
         """
@@ -69,7 +70,7 @@ class RegistrationForm(FlaskForm):
         """
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('Используйте другую почту.')
+            raise ValidationError(_l('Используйте другую почту.'))
 
 
 class EditProfileForm(FlaskForm):
@@ -88,9 +89,9 @@ class EditProfileForm(FlaskForm):
         validate_username(self, username: StringField):
             Метод для валидации имени пользователя.
     """
-    username: StringField = StringField('Имя пользователя', validators=[DataRequired()])
-    about_me: TextAreaField = TextAreaField('Обо мне', validators=[Length(min=0, max=140)])
-    submit: SubmitField = SubmitField('Принять изменения')
+    username: StringField = StringField(_l('Имя пользователя'), validators=[DataRequired()])
+    about_me: TextAreaField = TextAreaField(_l('Обо мне'), validators=[Length(min=0, max=140)])
+    submit: SubmitField = SubmitField(_l('Принять изменения'))
 
     def __init__(self, original_username: str, *args, **kwargs):
         """
@@ -117,7 +118,7 @@ class EditProfileForm(FlaskForm):
         if username.data != self.original_username:
             user = User.query.filter_by(username=self.username.data).first()
             if user is not None:
-                raise ValidationError("Пожалуйста, используйте другое имя для пользователя. Это имя уже занято.")
+                raise ValidationError(_l("Пожалуйста, используйте другое имя для пользователя. Это имя уже занято."))
 
 
 class EmptyForm(FlaskForm):
@@ -139,9 +140,9 @@ class PostForm(FlaskForm):
         post (TextAreaField): Поле для ввода текста поста. Обязательное поле.
         submit (SubmitField): Кнопка для отправки поста.
     """
-    post = TextAreaField("Напишите что-нибудь", validators=[
+    post = TextAreaField(_l("Напишите что-нибудь"), validators=[
         DataRequired(), Length(min=1, max=140)])
-    submit = SubmitField("Отправить")
+    submit = SubmitField(_l("Отправить"))
 
 
 class ResetPasswordRequestForm(FlaskForm):
@@ -152,8 +153,8 @@ class ResetPasswordRequestForm(FlaskForm):
         email (StringField): Поле для ввода email-адреса пользователя. Обязательное поле.
         submit (SubmitField): Кнопка для отправки запроса сброса пароля.
     """
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Запрос сброса пароля')
+    email = StringField(_l('Email'), validators=[DataRequired(), Email()])
+    submit = SubmitField(_l('Запрос сброса пароля'))
 
 
 class ResetPasswordForm(FlaskForm):
@@ -166,7 +167,7 @@ class ResetPasswordForm(FlaskForm):
         submit (SubmitField): Кнопка для отправки запроса сброса пароля.
 
     """
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Запрос сброса пароля')
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    password2 = PasswordField(_l(
+        'Повторите пароль'), validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField(_l('Запрос сброса пароля'))
