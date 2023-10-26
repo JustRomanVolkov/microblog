@@ -6,7 +6,7 @@ import os
 # Библиотеки третьей стороны
 import logging
 from flask import Flask, request
-from flask_babel import Babel, lazy_gettext as _l
+from flask_babel import Babel, lazy_gettext as _loc
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -55,7 +55,7 @@ login: LoginManager = LoginManager(app)
 # Определения URL-адреса страницы для перенаправления на вход в систему
 # Значение «login» выше является именем функции
 login.login_view = 'login'
-login.login_message = _l("Пожалуйста, войдите, чтобы открыть эту страницу.")
+login.login_message = _loc("Пожалуйста, войдите, чтобы открыть эту страницу.")
 
 # Создаем экземпляр Mail.
 mail = Mail(app)
