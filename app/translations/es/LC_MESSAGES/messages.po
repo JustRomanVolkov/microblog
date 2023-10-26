@@ -1,268 +1,269 @@
-# Spanish template for PROJECT.
+# Spanish translations for PROJECT.
 # Copyright (C) 2023 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-26 12:53+0700\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-10-26 18:08+0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: es\n"
+"Language-Team: es <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.0\n"
 
 #: app/__init__.py:58
-msgid "Пожалуйста, войдите, чтобы открыть эту страницу."
-msgstr "Por favor, inicie sesi?n para abrir esta p?gina."
+msgid "РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРѕР№РґРёС‚Рµ, С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ СЌС‚Сѓ СЃС‚СЂР°РЅРёС†Сѓ."
+msgstr "Por favor, inicie sesiГіn para abrir esta pГЎgina."
 
 #: app/email.py:60
-msgid "[Микроблог] Сброс Вашего Пароля."
-msgstr "[Microblog] Restablecimiento de tu contrase?a."
+msgid "[РњРёРєСЂРѕР±Р»РѕРі] РЎР±СЂРѕСЃ Р’Р°С€РµРіРѕ РџР°СЂРѕР»СЏ."
+msgstr "[Microblog] Restablecimiento de tu contraseГ±a."
 
 #: app/forms.py:23 app/forms.py:40 app/forms.py:92
-msgid "Имя пользователя"
+msgid "РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ"
 msgstr "Nombre de usuario"
 
 #: app/forms.py:24 app/forms.py:42
-msgid "Пароль"
-msgstr "Contrase?a"
+msgid "РџР°СЂРѕР»СЊ"
+msgstr "ContraseГ±a"
 
 #: app/forms.py:25
-msgid "Запомни меня"
-msgstr "Recu?rdame"
+msgid "Р—Р°РїРѕРјРЅРё РјРµРЅСЏ"
+msgstr "RecuГ©rdame"
 
 #: app/forms.py:26 app/templates/base.html:33
-msgid "Войти"
-msgstr "Iniciar sesi?n"
+msgid "Р’РѕР№С‚Рё"
+msgstr "Iniciar sesiГіn"
 
 #: app/forms.py:41
-msgid "Почта"
-msgstr "Correo electr?nico"
+msgid "РџРѕС‡С‚Р°"
+msgstr "Correo electrГіnico"
 
 #: app/forms.py:43
-msgid "Повтор пароля"
-msgstr "Repetir contrase?a"
+msgid "РџРѕРІС‚РѕСЂ РїР°СЂРѕР»СЏ"
+msgstr "Repetir contraseГ±a"
 
 #: app/forms.py:45
-msgid "Регистрация"
+msgid "Р РµРіРёСЃС‚СЂР°С†РёСЏ"
 msgstr "Registro"
 
 #: app/forms.py:59
-msgid "Используйте другое имя."
+msgid "РСЃРїРѕР»СЊР·СѓР№С‚Рµ РґСЂСѓРіРѕРµ РёРјСЏ."
 msgstr "Usa otro nombre."
 
 #: app/forms.py:73
-msgid "Используйте другую почту."
-msgstr "Usa otro correo electr?nico."
+msgid "РСЃРїРѕР»СЊР·СѓР№С‚Рµ РґСЂСѓРіСѓСЋ РїРѕС‡С‚Сѓ."
+msgstr "Usa otro correo electrГіnico."
 
 #: app/forms.py:93
-msgid "Обо мне"
-msgstr "Acerca de m?"
+msgid "РћР±Рѕ РјРЅРµ"
+msgstr "Acerca de mГ­"
 
 #: app/forms.py:94
-msgid "Принять изменения"
+msgid "РџСЂРёРЅСЏС‚СЊ РёР·РјРµРЅРµРЅРёСЏ"
 msgstr "Guardar cambios"
 
 #: app/forms.py:121
-msgid "Пожалуйста, используйте другое имя для пользователя. Это имя уже занято."
-msgstr "Por favor, utiliza otro nombre de usuario. Este nombre ya est? en uso."
+msgid "РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РёСЃРїРѕР»СЊР·СѓР№С‚Рµ РґСЂСѓРіРѕРµ РёРјСЏ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. Р­С‚Рѕ РёРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ."
+msgstr "Por favor, utiliza otro nombre de usuario. Este nombre ya estГЎ en uso."
 
 #: app/forms.py:143
-msgid "Напишите что-нибудь"
+msgid "РќР°РїРёС€РёС‚Рµ С‡С‚Рѕ-РЅРёР±СѓРґСЊ"
 msgstr "Escribe algo"
 
 #: app/forms.py:145
-msgid "Отправить"
+msgid "РћС‚РїСЂР°РІРёС‚СЊ"
 msgstr "Enviar"
 
 #: app/forms.py:156
 msgid "Email"
-msgstr "Correo electr?nico"
+msgstr "Correo electrГіnico"
 
 #: app/forms.py:157 app/forms.py:173
-msgid "Запрос сброса пароля"
-msgstr "Solicitud de restablecimiento de contrase?a"
+msgid "Р—Р°РїСЂРѕСЃ СЃР±СЂРѕСЃР° РїР°СЂРѕР»СЏ"
+msgstr "Solicitud de restablecimiento de contraseГ±a"
 
 #: app/forms.py:171
-msgid "Повторите пароль"
-msgstr "Repetir contrase?a"
+msgid "РџРѕРІС‚РѕСЂРёС‚Рµ РїР°СЂРѕР»СЊ"
+msgstr "Repetir contraseГ±a"
 
 #: app/routes.py:61
-msgid "Ваш пост опубликован."
-msgstr "Tu publicaci?n ha sido publicada."
+msgid "Р’Р°С€ РїРѕСЃС‚ РѕРїСѓР±Р»РёРєРѕРІР°РЅ."
+msgstr "Tu publicaciГіn ha sido publicada."
 
 #: app/routes.py:123
-msgid "Не верное имя пользователя или пароль"
-msgstr "Nombre de usuario o contrase?a incorrectos"
+msgid "РќРµ РІРµСЂРЅРѕРµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё РїР°СЂРѕР»СЊ"
+msgstr "Nombre de usuario o contraseГ±a incorrectos"
 
 #: app/routes.py:188
-msgid "Поздравляем, вы зарегистрированы! Теперь вы можете войти в систему."
-msgstr "?Felicidades, te has registrado! Ahora puedes iniciar sesi?n en el sistema."
+msgid "РџРѕР·РґСЂР°РІР»СЏРµРј, РІС‹ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹! РўРµРїРµСЂСЊ РІС‹ РјРѕР¶РµС‚Рµ РІРѕР№С‚Рё РІ СЃРёСЃС‚РµРјСѓ."
+msgstr "ВЎFelicidades, te has registrado! Ahora puedes iniciar sesiГіn en el sistema."
 
 #: app/routes.py:250
-msgid "Ваши изменения сохранены"
+msgid "Р’Р°С€Рё РёР·РјРµРЅРµРЅРёСЏ СЃРѕС…СЂР°РЅРµРЅС‹"
 msgstr "Tus cambios han sido guardados"
 
 #: app/routes.py:284
 #, python-format
-msgid "Пользователь %(username)s не найден."
+msgid "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ %(username)s РЅРµ РЅР°Р№РґРµРЅ."
 msgstr "Usuario %(username)s no encontrado."
 
 #: app/routes.py:288
-msgid "Вы не можете подписаться на себя."
+msgid "Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РїРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° СЃРµР±СЏ."
 msgstr "No puedes seguirte a ti mismo."
 
 #: app/routes.py:325
-msgid "Вы не можете отписаться от себя."
+msgid "Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РѕС‚РїРёСЃР°С‚СЊСЃСЏ РѕС‚ СЃРµР±СЏ."
 msgstr "No puedes dejar de seguirte a ti mismo."
 
 #: app/routes.py:369
-msgid "Проверьте почту и следуйте инструкция для изменения пароля."
-msgstr "Revise su correo electr?nico y siga las instrucciones para restablecer su contrase?a."
+msgid "РџСЂРѕРІРµСЂСЊС‚Рµ РїРѕС‡С‚Сѓ Рё СЃР»РµРґСѓР№С‚Рµ РёРЅСЃС‚СЂСѓРєС†РёСЏ РґР»СЏ РёР·РјРµРЅРµРЅРёСЏ РїР°СЂРѕР»СЏ."
+msgstr "Revise su correo electrГіnico y siga las instrucciones para restablecer su contraseГ±a."
 
 #: app/routes.py:402
-msgid "Ваш пароль был изменен."
-msgstr "Tu contrase?a ha sido cambiada."
+msgid "Р’Р°С€ РїР°СЂРѕР»СЊ Р±С‹Р» РёР·РјРµРЅРµРЅ."
+msgstr "Tu contraseГ±a ha sido cambiada."
 
 #: app/templates/404.html:4
-msgid "Файл не найден"
+msgid "Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ"
 msgstr "Archivo no encontrado"
 
 #: app/templates/404.html:5 app/templates/500.html:6
-msgid "На главную"
-msgstr "Ir a la p?gina de inicio"
+msgid "РќР° РіР»Р°РІРЅСѓСЋ"
+msgstr "Ir a la pГЎgina de inicio"
 
 #: app/templates/500.html:4
-msgid "Произошла непредвиденная ошибка"
+msgid "РџСЂРѕРёР·РѕС€Р»Р° РЅРµРїСЂРµРґРІРёРґРµРЅРЅР°СЏ РѕС€РёР±РєР°"
 msgstr "Se produjo un error inesperado"
 
 #: app/templates/500.html:5
 msgid ""
-"Администратор был уведомлен. Приносим извинения за неудобства."
+"РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ Р±С‹Р» СѓРІРµРґРѕРјР»РµРЅ. РџСЂРёРЅРѕСЃРёРј РёР·РІРёРЅРµРЅРёСЏ Р·Р° РЅРµСѓРґРѕР±СЃС‚РІР°."
 msgstr ""
 "El administrador ha sido notificado. Pedimos disculpas por las molestias."
 
 #: app/templates/_post.html:14
 #, python-format
-msgid "%(username)s сообщил %(when)s"
+msgid "%(username)s СЃРѕРѕР±С‰РёР» %(when)s"
 msgstr "%(username)s ha publicado %(when)s"
 
 #: app/templates/base.html:28
-msgid "Главная"
+msgid "Р“Р»Р°РІРЅР°СЏ"
 msgstr "Inicio"
 
 #: app/templates/base.html:29
-msgid "Поиск"
+msgid "РџРѕРёСЃРє"
 msgstr "Buscar"
 
 #: app/templates/base.html:35
-msgid "Профиль"
+msgid "РџСЂРѕС„РёР»СЊ"
 msgstr "Perfil"
 
 #: app/templates/base.html:36
-msgid "Выйти"
-msgstr "Cerrar sesi?n"
+msgid "Р’С‹Р№С‚Рё"
+msgstr "Cerrar sesiГіn"
 
 #: app/templates/edit_profile.html:5 app/templates/user.html:20
-msgid "Редактирование профиля"
+msgid "Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїСЂРѕС„РёР»СЏ"
 msgstr "Editar perfil"
 
 #: app/templates/index.html:5
 #, python-format
-msgid "Привет, %(username)s!"
-msgstr "?Hola, %(username)s!"
+msgid "РџСЂРёРІРµС‚, %(username)s!"
+msgstr "ВЎHola, %(username)s!"
 
 #: app/templates/index.html:19 app/templates/user.html:48
-msgid "Новые сообщения"
+msgid "РќРѕРІС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ"
 msgstr "Nuevos mensajes"
 
 #: app/templates/index.html:24 app.templates/user.html:53
-msgid "Старые сообщения"
+msgid "РЎС‚Р°СЂС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ"
 msgstr "Mensajes antiguos"
 
 #: app/templates/login.html:5
-msgid "Авторизация"
-msgstr "Inicio de sesi?n"
+msgid "РђРІС‚РѕСЂРёР·Р°С†РёСЏ"
+msgstr "Inicio de sesiГіn"
 
 #: app/templates/login.html:12 app/templates/register.html:5
-msgid "Регистрация"
+msgid "Р РµРіРёСЃС‚СЂР°С†РёСЏ"
 msgstr "Registro"
 
 #: app/templates/login.html:14
-msgid "Забыли пароль?"
-msgstr "?Olvidaste tu contrase?a?"
+msgid "Р—Р°Р±С‹Р»Рё РїР°СЂРѕР»СЊ?"
+msgstr "ВїOlvidaste tu contraseГ±a?"
 
 #: app/templates/login.html:15
-msgid "Сброс пароля"
-msgstr "Restablecer contrase?a"
+msgid "РЎР±СЂРѕСЃ РїР°СЂРѕР»СЏ"
+msgstr "Restablecer contraseГ±a"
 
 #: app/templates/reset_password.html:5
-msgid "Сбросить пароль"
-msgstr "Restablecer contrase?a"
+msgid "РЎР±СЂРѕСЃРёС‚СЊ РїР°СЂРѕР»СЊ"
+msgstr "Restablecer contraseГ±a"
 
 #: app/templates/reset_password_request.html:5
-msgid "Сброс пароля"
-msgstr "Solicitud de restablecimiento de contrase?a"
+msgid "РЎР±СЂРѕСЃ РїР°СЂРѕР»СЏ"
+msgstr "Solicitud de restablecimiento de contraseГ±a"
 
 #: app/templates/user.html:8
-msgid "Пользователь"
+msgid "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ"
 msgstr "Usuario"
 
 #: app/templates/user.html:13
-msgid "Последнее посещение"
-msgstr "?ltima visita"
+msgid "РџРѕСЃР»РµРґРЅРµРµ РїРѕСЃРµС‰РµРЅРёРµ"
+msgstr "Гљltima visita"
 
 #: app/templates/user.html:15
 #, python-format
-msgid "%(count)d подписчиков"
+msgid "%(count)d РїРѕРґРїРёСЃС‡РёРєРѕРІ"
 msgstr "%(count)d seguidores"
 
 #: app/templates/user.html:16
 #, python-format
-msgid "%(count)d подписок"
+msgid "%(count)d РїРѕРґРїРёСЃРѕРє"
 msgstr "%(count)d seguidos"
 
 #: app/templates/user.html:26
-msgid "Подписаться"
+msgid "РџРѕРґРїРёСЃР°С‚СЊСЃСЏ"
 msgstr "Seguir"
 
 #: app/templates/user.html:33
-msgid "Отписаться"
+msgid "РћС‚РїРёСЃР°С‚СЊСЃСЏ"
 msgstr "Dejar de seguir"
 
 #: app/templates/email/reset_password.html:1
-msgid "Уважаемый"
+msgid "РЈРІР°Р¶Р°РµРјС‹Р№"
 msgstr "Estimado"
 
 #: app/templates/email/reset_password.html:3
-msgid "Чтобы сбросить пароль"
-msgstr "Para restablecer tu contrase?a"
+msgid "Р§С‚РѕР±С‹ СЃР±СЂРѕСЃРёС‚СЊ РїР°СЂРѕР»СЊ"
+msgstr "Para restablecer tu contraseГ±a"
 
 #: app/templates/email/reset_password.html:5
-msgid "кликните по ссылке"
+msgid "РєР»РёРєРЅРёС‚Рµ РїРѕ СЃСЃС‹Р»РєРµ"
 msgstr "haz clic en el enlace"
 
 #: app/templates/email/reset_password.html:8
 msgid ""
-"Кроме того, вы можете вставить следующую ссылку в адресную строку "
-"браузера:"
+"РљСЂРѕРјРµ С‚РѕРіРѕ, РІС‹ РјРѕР¶РµС‚Рµ РІСЃС‚Р°РІРёС‚СЊ СЃР»РµРґСѓСЋС‰СѓСЋ СЃСЃС‹Р»РєСѓ РІ Р°РґСЂРµСЃРЅСѓСЋ СЃС‚СЂРѕРєСѓ "
+"Р±СЂР°СѓР·РµСЂР°:"
 msgstr ""
-"Adem?s, puedes copiar y pegar el siguiente enlace en la barra de direcciones de tu navegador:"
+"AdemГЎs, puedes copiar y pegar el siguiente enlace en la barra de direcciones de tu navegador:"
 
 #: app/templates/email/reset_password.html:10
-msgid "Если вы не запрашивали сброс пароля, просто проигнорируйте это сообщение."
-msgstr "Si no has solicitado un restablecimiento de contrase?a, simplemente ignora este mensaje."
+msgid "Р•СЃР»Рё РІС‹ РЅРµ Р·Р°РїСЂР°С€РёРІР°Р»Рё СЃР±СЂРѕСЃ РїР°СЂРѕР»СЏ, РїСЂРѕСЃС‚Рѕ РїСЂРѕРёРіРЅРѕСЂРёСЂСѓР№С‚Рµ СЌС‚Рѕ СЃРѕРѕР±С‰РµРЅРёРµ."
+msgstr "Si no has solicitado un restablecimiento de contraseГ±a, simplemente ignora este mensaje."
 
 #: app/templates/email/reset_password.html:11
-msgid "С Уважением,"
+msgid "РЎ РЈРІР°Р¶РµРЅРёРµРј,"
 msgstr "Atentamente,"
 
 #: app/templates/email/reset_password.html:12
-msgid "Команда Микроблога"
+msgid "РљРѕРјР°РЅРґР° РњРёРєСЂРѕР±Р»РѕРіР°"
 msgstr "El equipo de Microblog"
