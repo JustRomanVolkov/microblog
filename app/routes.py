@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 # Стандартные библиотеки Python
-from typing import List, Dict, Union
+from typing import Union
 from datetime import datetime
 
 # Библиотеки третьей стороны
 from flask import render_template, flash, redirect, url_for, Response, request
-from flask_babel import Babel, gettext as _
+from flask_babel import gettext as _
 from flask_login import current_user, login_user, logout_user, login_required
 from urllib.parse import urlsplit
 
@@ -38,7 +38,7 @@ def before_request() -> None:
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
-def index() -> str:
+def index() -> Union[str, 'Response']:
     """
     Маршрут для главной страницы приложения.
 
@@ -73,7 +73,7 @@ def index() -> str:
 
 @app.route('/explore')
 @login_required
-def explore():
+def explore() -> str:
     """
     Маршрут для страницы "Поиск".
 
@@ -281,7 +281,7 @@ def follow(username: str) -> Response:
     if form.validate_on_submit():  # Если форма отправлена
         user = User.query.filter_by(username=username).first()  # Ищем пользователя по имени
         if user is None:
-            flash(_(f"Пользователь {username} не найден."))
+            flash(_('Пользователь %(username)s не найден.', username=username))
             return redirect(url_for('index'))
 
         if user == current_user:
@@ -343,12 +343,9 @@ def reset_password_request() -> Union[str, Response]:
         - POST: Обрабатывает запрос на сброс пароля.
 
     Если пользователь аутентифицирован, он будет перенаправлен на страницу 'index'.
-    В противном случае, отображается форма для ввода email-адреса.
+    В противном случае отображается форма для ввода email-адреса.
     Если форма заполнена и введенный email найден в базе данных, отправляется email с инструкциями по сбросу пароля.
     После этого пользователь перенаправляется на страницу 'login'.
-
-    Args:
-        None
 
     Returns:
         GET: HTML-страница с формой запроса сброса пароля.
