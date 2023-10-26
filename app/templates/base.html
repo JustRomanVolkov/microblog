@@ -1,10 +1,13 @@
 {% extends 'bootstrap/base.html' %}
 
-{# РЈСЃС‚Р°РЅРѕРІРєР° РєРѕРґРёСЂРѕРІРєРё UTF-8 #}
 {% set encoding = 'utf-8' %}
 
+{% block head %}
+    <meta charset="utf-8">
+{% endblock head %}
+
 {% block title %}
-    {% if title %}{{ title }} - РњРёРєСЂРѕР±Р»РѕРі{% else %}Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РІ РјРёРєСЂРѕР±Р»РѕРі{% endif %}
+    {% if title %}{{ title }} - Микроблог{% else %}Добро пожаловать в микроблог{% endif %}
 {% endblock title %}
 
 {% block navbar %}
@@ -18,19 +21,19 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">РњРёРєСЂРѕР±Р»РѕРі</a>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Микроблог</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('index') }}">{{ _('Р“Р»Р°РІРЅР°СЏ') }}</a></li>
-                    <li><a href="{{ url_for('explore') }}">{{  _('РџРѕРёСЃРє') }}</a></li>
+                    <li><a href="{{ url_for('index') }}">{{ _('Главная') }}</a></li>
+                    <li><a href="{{ url_for('explore') }}">{{  _('Поиск') }}</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
-                    <li><a href="{{ url_for('login') }}">{{ _('Р’РѕР№С‚Рё') }}</a></li>
+                    <li><a href="{{ url_for('login') }}">{{ _('Войти') }}</a></li>
                     {% else %}
-                    <li><a href="{{ url_for('user', username=current_user.username) }}">{{ _('РџСЂРѕС„РёР»СЊ')  }}</a></li>
-                    <li><a href="{{ url_for('logout') }}">{{ _('Р’С‹Р№С‚Рё') }}</a></li>
+                    <li><a href="{{ url_for('user', username=current_user.username) }}">{{ _('Профиль')  }}</a></li>
+                    <li><a href="{{ url_for('logout') }}">{{ _('Выйти') }}</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -50,7 +53,7 @@
         {% endwith %}
 
         {% block app_content %}
-            {# СЃРѕРґРµСЂР¶РёРјРѕРµ РїСЂРёР»РѕР¶РµРЅРёСЏ РєРѕС‚РѕСЂРѕРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РїСЂРµРґРѕСЃС‚Р°РІР»РµРЅРѕ РІ Р±Р»РѕРєРµ app_content #}
+            {# содержимое приложения которое должно быть предоставлено в блоке app_content #}
         {% endblock app_content %}
     </div>
 {% endblock %}

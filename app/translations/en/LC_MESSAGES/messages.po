@@ -1,0 +1,270 @@
+# English translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-10-26 12:53+0700\n"
+"PO-Revision-Date: 2023-10-26 13:15+0700\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.13.0\n"
+
+#: app/__init__.py:58
+msgid "Пожалуйста, войдите, чтобы открыть эту страницу."
+msgstr "Please log in to access this page."
+
+#: app/email.py:60
+msgid "[Микроблог] Сброс Вашего Пароля."
+msgstr "[Microblog] Reset Your Password."
+
+#: app/forms.py:23 app/forms.py:40 app/forms.py:92
+msgid "Имя пользователя"
+msgstr "Username"
+
+#: app/forms.py:24 app/forms.py:42
+msgid "Пароль"
+msgstr "Password"
+
+#: app/forms.py:25
+msgid "Запомни меня"
+msgstr "Remember me"
+
+#: app/forms.py:26 app/templates/base.html:33
+msgid "Войти"
+msgstr "Log in"
+
+#: app/forms.py:41
+msgid "Почта"
+msgstr "Email"
+
+#: app/forms.py:43
+msgid "Повтор пароля"
+msgstr "Confirm Password"
+
+#: app/forms.py:45
+msgid "Регистрация"
+msgstr "Registration"
+
+#: app/forms.py:59
+msgid "Используйте другое имя."
+msgstr "Please use another username."
+
+#: app/forms.py:73
+msgid "Используйте другую почту."
+msgstr "Please use another email."
+
+#: app/forms.py:93
+msgid "Обо мне"
+msgstr "About me"
+
+#: app/forms.py:94
+msgid "Принять изменения"
+msgstr "Accept Changes"
+
+#: app/forms.py:121
+msgid "Пожалуйста, используйте другое имя для пользователя. Это имя уже занято."
+msgstr "Please use another username. This username is already taken."
+
+#: app/forms.py:143
+msgid "Напишите что-нибудь"
+msgstr "Write something"
+
+#: app/forms.py:145
+msgid "Отправить"
+msgstr "Send"
+
+#: app/forms.py:156
+msgid "Email"
+msgstr "Email"
+
+#: app/forms.py:157 app/forms.py:173
+msgid "Запрос сброса пароля"
+msgstr "Password reset request"
+
+#: app/forms.py:171
+msgid "Повторите пароль"
+msgstr "Confirm Password"
+
+#: app/routes.py:61
+msgid "Ваш пост опубликован."
+msgstr "Your post has been published."
+
+#: app/routes.py:123
+msgid "Не верное имя пользователя или пароль"
+msgstr "Invalid username or password"
+
+#: app/routes.py:188
+msgid "Поздравляем, вы зарегистрированы! Теперь вы можете войти в систему."
+msgstr "Congratulations, you are registered! Now you can log in."
+
+#: app/routes.py:250
+msgid "Ваши изменения сохранены"
+msgstr "Your changes have been saved."
+
+#: app/routes.py:284
+#, python-format
+msgid "Пользователь %(username)s не найден."
+msgstr "User %(username)s not found."
+
+#: app/routes.py:288
+msgid "Вы не можете подписаться на себя."
+msgstr "You can't subscribe to yourself."
+
+#: app/routes.py:325
+msgid "Вы не можете отписаться от себя."
+msgstr "You can't unsubscribe from yourself."
+
+#: app/routes.py:369
+msgid "Проверьте почту и следуйте инструкция для изменения пароля."
+msgstr "Check your email and follow the instructions to reset your password."
+
+#: app/routes.py:402
+msgid "Ваш пароль был изменен."
+msgstr "Your password has been changed."
+
+#: app/templates/404.html:4
+msgid "Файл не найден"
+msgstr "File not found"
+
+#: app/templates/404.html:5 app/templates/500.html:6
+msgid "На главную"
+msgstr "Back to home"
+
+#: app/templates/500.html:4
+msgid "Произошла непредвиденная ошибка"
+msgstr "An unexpected error has occurred"
+
+#: app/templates/500.html:5
+msgid ""
+"Администратор был уведомлен. Приносим извинения за неудобства."
+msgstr ""
+"The administrator has been notified. We apologize for the inconvenience."
+
+#: app/templates/_post.html:14
+#, python-format
+msgid "%(username)s сообщил %(when)s"
+msgstr "%(username)s reported %(when)s"
+
+#: app/templates/base.html:28
+msgid "Главная"
+msgstr "Home"
+
+#: app/templates/base.html:29
+msgid "Поиск"
+msgstr "Search"
+
+#: app/templates/base.html:35
+msgid "Профиль"
+msgstr "Profile"
+
+#: app/templates/base.html:36
+msgid "Выйти"
+msgstr "Log out"
+
+#: app/templates/edit_profile.html:5 app/templates/user.html:20
+msgid "Редактирование профиля"
+msgstr "Edit Profile"
+
+#: app/templates/index.html:5
+#, python-format
+msgid "Привет, %(username)s!"
+msgstr "Hello, %(username)s!"
+
+#: app/templates/index.html:19 app/templates/user.html:48
+msgid "Новые сообщения"
+msgstr "New Messages"
+
+#: app/templates/index.html:24 app.templates/user.html:53
+msgid "Старые сообщения"
+msgstr "Old Messages"
+
+#: app/templates/login.html:5
+msgid "Авторизация"
+msgstr "Login"
+
+#: app/templates/login.html:12 app/templates/register.html:5
+msgid "Регистрация"
+msgstr "Registration"
+
+#: app/templates/login.html:14
+msgid "Забыли пароль?"
+msgstr "Forgot password?"
+
+#: app/templates/login.html:15
+msgid "Сброс пароля"
+msgstr "Reset Password"
+
+#: app/templates/reset_password.html:5
+msgid "Сбросить пароль"
+msgstr "Reset Password"
+
+#: app/templates/reset_password_request.html:5
+msgid "Сброс пароля"
+msgstr "Password reset"
+
+#: app/templates/user.html:8
+msgid "Пользователь"
+msgstr "User"
+
+#: app/templates/user.html:13
+msgid "Последнее посещение"
+msgstr "Last Visit"
+
+#: app/templates/user.html:15
+#, python-format
+msgid "%(count)d подписчиков"
+msgstr "%(count)d followers"
+
+#: app/templates/user.html:16
+#, python-format
+msgid "%(count)d подписок"
+msgstr "%(count)d following"
+
+#: app/templates/user.html:26
+msgid "Подписаться"
+msgstr "Follow"
+
+#: app/templates/user.html:33
+msgid "Отписаться"
+msgstr "Unfollow"
+
+#: app/templates/email/reset_password.html:1
+msgid "Уважаемый"
+msgstr "Dear"
+
+#: app/templates/email/reset_password.html:3
+msgid "Чтобы сбросить пароль"
+msgstr "To reset your password"
+
+#: app/templates/email/reset_password.html:5
+msgid "кликните по ссылке"
+msgstr "click the link"
+
+#: app/templates/email/reset_password.html:8
+msgid ""
+"Кроме того, вы можете вставить следующую ссылку в адресную строку "
+"браузера:"
+msgstr ""
+"Alternatively, you can paste the following link into your browser's address bar:"
+
+#: app/templates/email/reset_password.html:10
+msgid "Если вы не запрашивали сброс пароля, просто проигнорируйте это сообщение."
+msgstr "If you didn't request a password reset, simply ignore this message."
+
+#: app/templates/email/reset_password.html:11
+msgid "С Уважением,"
+msgstr "Sincerely,"
+
+#: app/templates/email/reset_password.html:12
+msgid "Команда Микроблога"
+msgstr "Microblog Team"
