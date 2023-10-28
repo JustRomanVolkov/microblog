@@ -14,11 +14,18 @@
             {{ _('%(username)s сообщил %(when)s',
             username=user_link, when=moment(post.timestamp).fromNow()) }}
             <br>
-            {{ post.body }}
+            <p class="post-text" data-postid="{{ post.id }}">{{ post.body }}</p>
             {% if post.language and post.language != g.locale %}
                 <br><br>
-                <a href="#">{{ _('Translate') }}</a>
+                <a href="#" class="translate-link" id="{{ post.id }}">{{ _('Translate') }}</a>
             {% endif %}
         </td>
     </tr>
 </table>
+
+
+<!-- Подключаем jQuery (подразумевается, что вы используете jQuery) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Ваш скрипт для перевода -->
+<script src="{{ url_for('static', filename='js/translate.js') }}"></script>

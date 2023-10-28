@@ -63,6 +63,8 @@ bootstrap = Bootstrap(app)
 # Создаем экземпляр Flask-Moment и связываем его с Flask-приложением.
 moment = Moment(app)
 
+# Роут для статических файлов
+app.static_folder = 'static'
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
