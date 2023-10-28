@@ -33,12 +33,9 @@ migrate: Migrate = Migrate(app, db)
 
 def get_locale():
     """
-    Функция для явного установления текущего языка приложения.
+    Функция для установления текущего языка приложения.
 
-    В данном случае, функция всегда возвращает язык 'ru', что означает, что
-    приложение будет работать на русском языке.
-
-    :return: Возвращает строку, представляющую выбранный язык (в данном случае 'ru').
+    :return: Возвращает строку, представляющую выбранный язык.
     """
     # return request.accept_languages.best_match(app.config['BABEL_LANGUAGES'])
     return 'ru'
@@ -66,6 +63,8 @@ bootstrap = Bootstrap(app)
 # Создаем экземпляр Flask-Moment и связываем его с Flask-приложением.
 moment = Moment(app)
 
+# Роут для статических файлов
+app.static_folder = 'static'
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
