@@ -1,13 +1,13 @@
 <table class="table table-hover">
     <tr>
         <td width="70px">
-            <a href="{{ url_for('user', username=post.author.username) }}">
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
                 <img src="{{ post.author.avatar(70) }}" />
             </a>
         </td>
         <td>
             {% set user_link %}
-                <a href="{{ url_for('user', username=post.author.username) }}">
+                <a href="{{ url_for('main.user', username=post.author.username) }}">
                     {{ post.author.username }}
                 </a>
             {% endset %}
@@ -22,8 +22,8 @@
 </table>
 
 
-<!-- Подключаем jQuery (подразумевается, что вы используете jQuery) -->
+<!-- Подключаем jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Ваш скрипт для перевода -->
+<!-- Скрипт для перевода -->
 <script src="{{ url_for('static', filename='js/translate.js') }}"></script>

@@ -16,19 +16,19 @@
                     {{ _('%(count)d подписок', count=user.followed.count()) }}</p>
 
                 {% if user == current_user %}
-                    <p><a href="{{ url_for('edit_profile') }}">
+                    <p><a href="{{ url_for('main.edit_profile') }}">
                         {{ _('Редактирование профиля') }}
                     </a></p>
                 {% elif not current_user.is_following(user) %}
                     <p>
-                        <form action="{{ url_for('follow', username=user.username) }}" method="post">
+                        <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
                             {{ form.submit(value=_('Подписаться'), class_='btn btn-default' )}}
                         </form>
                     </p>
                 {% else %}
                     <p>
-                        <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
+                        <form action="{{ url_for('main.unfollow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
                             {{ form.submit(value=_('Отписаться'), class_='btn btn-default') }}
                         </form>
