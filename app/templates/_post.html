@@ -13,10 +13,8 @@
             {% endset %}
             {{ _('%(username)s сообщил %(when)s',
             username=user_link, when=moment(post.timestamp).fromNow()) }}
-            <br>
-            <p class="post-text" data-postid="{{ post.id }}">{{ post.body }}</p>
+            <p class="post-text" data-postid="{{ post.id }}" data-original-text="{{ post.body }}">{{ post.body }}</p>
             {% if post.language and post.language != g.locale %}
-                <br><br>
                 <a href="#" class="translate-link" id="{{ post.id }}">{{ _('Translate') }}</a>
             {% endif %}
         </td>
