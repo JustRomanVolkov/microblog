@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# !/usr/bin/env python
+
 # Стандартные библиотеки Python
 from datetime import datetime, timedelta
 
@@ -7,8 +9,24 @@ from datetime import datetime, timedelta
 import unittest
 
 # Собственные модули
-from app import app, db
+from app import create_app, db
 from app.models import User, Post
+from config import Config
+
+
+class TestConfig(Config):
+    """
+    Конфигурация тестового режима.
+
+    Устанавливает конфигурацию для запуска приложения в тестовом режиме.
+
+    Attributes:
+        TESTING (bool): Устанавливает флаг тестирования в True.
+        SQLALCHEMY_DATABASE_URI (str): Устанавливает URI для базы данных SQLite.
+
+    """
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
 
 
 class UserModelCase(unittest.TestCase):
@@ -24,108 +42,103 @@ class UserModelCase(unittest.TestCase):
         """
         Настройка тестового окружения: установка временной тестовой базы данных SQLite.
         """
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
-        self.app = app.test_client()
-        with app.app_context():
-            db.create_all()
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
 
     def tearDown(self):
         """
         Завершение теста и удаление временной базы данных.
         """
-        with app.app_context():
-            db.session.remove()
-            db.drop_all()
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
 
     def test_password_hashing(self):
         """
         Тест хеширования пароля пользователя.
         """
-        with app.app_context():
-            u = User(username='susan')
-            u.set_password('cat')
-            self.assertFalse(u.check_password('dog'))
-            self.assertTrue(u.check_password('cat'))
+        u = User(username='susan')
+        u.set_password('cat')
+        self.assertFalse(u.check_password('dog'))
+        self.assertTrue(u.check_password('cat'))
 
     def test_avatar(self):
         """
         Тест метода для получения аватара пользователя.
         """
-        with app.app_context():
-            u = User(username='john', email='john@example.com')
-            self.assertEqual(u.avatar(128), ('https://www.gravatar.com/avatar/'
-                                             'd4c74594d841139328695756648b6bd6'
-                                             '?d=identicon&s=128'))
+        u = User(username='john', email='john@example.com')
+        self.assertEqual(u.avatar(128), ('https://www.gravatar.com/avatar/'
+                                         'd4c74594d841139328695756648b6bd6'
+                                         '?d=identicon&s=128'))
 
     def test_follow(self):
         """
         Тест подписки и отписки пользователей друг от друга.
         """
-        with app.app_context():
-            u1 = User(username='john', email='john@example.com')
-            u2 = User(username='susan', email='susan@example.com')
-            db.session.add(u1)
-            db.session.add(u2)
-            db.session.commit()
-            self.assertEqual(u1.followed.all(), [])
-            self.assertEqual(u1.followers.all(), [])
+        u1 = User(username='john', email='john@example.com')
+        u2 = User(username='susan', email='susan@example.com')
+        db.session.add(u1)
+        db.session.add(u2)
+        db.session.commit()
+        self.assertEqual(u1.followed.all(), [])
+        self.assertEqual(u1.followers.all(), [])
 
-            u1.follow(u2)
-            db.session.commit()
-            self.assertTrue(u1.is_following(u2))
-            self.assertEqual(u1.followed.count(), 1)
-            self.assertEqual(u1.followed.first().username, 'susan')
-            self.assertEqual(u2.followers.count(), 1)
-            self.assertEqual(u2.followers.first().username, 'john')
+        u1.follow(u2)
+        db.session.commit()
+        self.assertTrue(u1.is_following(u2))
+        self.assertEqual(u1.followed.count(), 1)
+        self.assertEqual(u1.followed.first().username, 'susan')
+        self.assertEqual(u2.followers.count(), 1)
+        self.assertEqual(u2.followers.first().username, 'john')
 
-            u1.unfollow(u2)
-            db.session.commit()
-            self.assertFalse(u1.is_following(u2))
-            self.assertEqual(u1.followed.count(), 0)
-            self.assertEqual(u2.followers.count(), 0)
+        u1.unfollow(u2)
+        db.session.commit()
+        self.assertFalse(u1.is_following(u2))
+        self.assertEqual(u1.followed.count(), 0)
+        self.assertEqual(u2.followers.count(), 0)
 
     def test_follow_posts(self):
         """
         Тест получения сообщений, на которые подписан текущий пользователь.
         """
-        with app.app_context():
+        # Создаем пользователей
+        u1 = User(username='john', email='john@example.com')
+        u2 = User(username='susan', email='susan@example.com')
+        u3 = User(username='mary', email='mary@example.com')
+        u4 = User(username='david', email='david@example.com')
+        db.session.add_all([u1, u2, u3, u4])
 
-            # Создаем пользователей
-            u1 = User(username='john', email='john@example.com')
-            u2 = User(username='susan', email='susan@example.com')
-            u3 = User(username='mary', email='mary@example.com')
-            u4 = User(username='david', email='david@example.com')
-            db.session.add_all([u1, u2, u3, u4])
+        # Создаем сообщения
+        now = datetime.utcnow()
+        p1 = Post(body="post from john", author=u1,
+                  timestamp=now + timedelta(seconds=1))
+        p2 = Post(body="post from susan", author=u2,
+                  timestamp=now + timedelta(seconds=4))
+        p3 = Post(body="post from mary", author=u3,
+                  timestamp=now + timedelta(seconds=3))
+        p4 = Post(body="post from david", author=u4,
+                  timestamp=now + timedelta(seconds=2))
+        db.session.add_all([p1, p2, p3, p4])
+        db.session.commit()
 
-            # Создаем сообщения
-            now = datetime.utcnow()
-            p1 = Post(body="post from john", author=u1,
-                      timestamp=now + timedelta(seconds=1))
-            p2 = Post(body="post from susan", author=u2,
-                      timestamp=now + timedelta(seconds=4))
-            p3 = Post(body="post from mary", author=u3,
-                      timestamp=now + timedelta(seconds=3))
-            p4 = Post(body="post from david", author=u4,
-                      timestamp=now + timedelta(seconds=2))
-            db.session.add_all([p1, p2, p3, p4])
-            db.session.commit()
+        # настраиваем подписки
+        u1.follow(u2)
+        u1.follow(u4)
+        u2.follow(u3)
+        u3.follow(u4)
+        db.session.commit()
 
-            # настраиваем подписки
-            u1.follow(u2)
-            u1.follow(u4)
-            u2.follow(u3)
-            u3.follow(u4)
-            db.session.commit()
-
-            # проверяем результаты
-            f1 = u1.followed_posts().all()
-            f2 = u2.followed_posts().all()
-            f3 = u3.followed_posts().all()
-            f4 = u4.followed_posts().all()
-            self.assertEqual(f1, [p2, p4, p1])
-            self.assertEqual(f2, [p2, p3])
-            self.assertEqual(f3, [p3, p4])
-            self.assertEqual(f4, [p4])
+        # проверяем результаты
+        f1 = u1.followed_posts().all()
+        f2 = u2.followed_posts().all()
+        f3 = u3.followed_posts().all()
+        f4 = u4.followed_posts().all()
+        self.assertEqual(f1, [p2, p4, p1])
+        self.assertEqual(f2, [p2, p3])
+        self.assertEqual(f3, [p3, p4])
+        self.assertEqual(f4, [p4])
 
 
 if __name__ == '__main__':
