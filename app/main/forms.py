@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Библиотеки третьей стороны
+from flask import request
 from flask_babel import lazy_gettext as _loc
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
@@ -80,3 +81,19 @@ class PostForm(FlaskForm):
     post = TextAreaField(_loc("Напишите что-нибудь"), validators=[
         DataRequired(), Length(min=1, max=140)])
     submit = SubmitField(_loc("Отправить"))
+
+
+class SearchForm(FlaskForm):
+    q = StringField(_loc('Search'), validators=[DataRequired()])  # Определение поля для ввода текста поиска
+
+    def __init__(self, *args, **kwargs):
+        # Проверяем, были ли переданы данные формы в качестве аргументов
+        if 'formdata' not in kwargs:
+            # Если не были переданы, используем аргументы запроса (GET-параметры)
+            kwargs['formdata'] = request.args
+        # Проверяем, был ли передан дополнительный мета-атрибут
+        if 'meta' not in kwargs:
+            # Если не был передан, устанавливаем мета-атрибут csrf в False
+            kwargs['meta'] = {'csrf': False}
+        # Вызываем конструктор родительского класса с переданными аргументами
+        super(SearchForm, self).__init__(*args, **kwargs)
