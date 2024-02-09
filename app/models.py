@@ -10,11 +10,13 @@ import jwt
 from flask import current_app
 from flask_login import UserMixin
 from hashlib import md5
+import sqlalchemy as sa
 from sqlalchemy.orm import relationship, Query
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Собственные модули
 from app import db, login
+from app.search import add_to_index, remove_from_index, query_index
 
 
 # Таблица followers моделирует отношения "подписчик - подписан на" между пользователями.
@@ -165,12 +167,66 @@ class User(UserMixin, db.Model):
         return User.query.get(id)
 
 
-class Post(db.Model):
+
+class SearchableMixin(object):
+    @classmethod
+    def search(cls, expression, page, per_page):
+        # Выполняем поиск по индексу
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:  # Если результаты не найдены
+            return [], 0  # Возвращаем пустой список и ноль
+        when = []  # Создаем список для определения порядка результатов
+        for i in range(len(ids)):
+            when.append((ids[i], i))  # Добавляем идентификаторы и их порядковый номер в список when
+        # Формируем запрос к базе данных для получения объектов по их идентификаторам
+        query = sa.select(cls).where(cls.id.in_(ids)).order_by(
+            db.case(*when, value=cls.id))
+        return db.session.scalars(query), total  # Возвращаем результаты поиска и общее количество найденных объектов
+
+    @classmethod
+    def before_commit(cls, session):
+        # Запоминаем изменения в объектах перед фиксацией транзакции
+        session._changes = {
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
+
+    @classmethod
+    def after_commit(cls, session):
+        # Применяем изменения к индексу после фиксации транзакции
+        for obj in session._changes['add']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['update']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['delete']:
+            if isinstance(obj, SearchableMixin):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None  # Сбрасываем запомненные изменения
+
+    @classmethod
+    def reindex(cls):
+        # Переиндексируем все объекты модели
+        for obj in db.session.scalars(sa.select(cls)):
+            add_to_index(cls.__tablename__, obj)
+
+
+# Добавляем слушателей событий к экземпляру db.session
+db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
+
+
+class Post(SearchableMixin, db.Model):
     """
     Модель поста для базы данных.
     """
     id: int = db.Column(db.Integer, primary_key=True)
     body: str = db.Column(db.String(140))
+
+    # тут индексация для поиска, а сама логика в search.py
+    __searchable__ = ['body']
 
     # Специально не включил () после utcnow,
     # поэтому передаю эту функцию, а не результат ее вызова.

@@ -4,7 +4,7 @@
 import os
 
 # Библиотеки третьей стороны
-import logging
+from elasticsearch import Elasticsearch
 from flask import Flask
 from flask_babel import Babel, lazy_gettext as _loc
 from flask_bootstrap import Bootstrap
@@ -13,6 +13,7 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
 # Собственные модули
@@ -100,6 +101,9 @@ def create_app(config_class=Config):
 
         # Записываем информационное сообщение в лог о запуске приложения.
         app.logger.info('Microblog startup')
+
+        app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+            if app.config['ELASTICSEARCH_URL'] else None
 
     return app
 

@@ -16,7 +16,7 @@ from werkzeug import Response
 
 from app import db
 from app.main import bp
-from app.main.forms import EditProfileForm, EmptyForm, PostForm
+from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm
 from app.models import User, Post
 
 
@@ -237,3 +237,46 @@ def unfollow(username: str) -> Response:
         return redirect(url_for('main.user', username=username))
     else:
         return redirect(url_for('main.index'))
+
+
+# Декоратор, выполняемый перед каждым запросом приложения
+@bp.before_app_request
+def before_request():
+    # Проверяем, аутентифицирован ли текущий пользователь
+    if current_user.is_authenticated:
+        # Если пользователь аутентифицирован, обновляем время его последнего посещения
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()  # Фиксируем изменения в базе данных
+        # Инициализируем форму поиска в глобальном контексте
+        g.search_form = SearchForm()
+    # Устанавливаем локаль для текущего запроса
+    g.locale = str(get_locale())
+
+
+# Маршрут для обработки запросов поиска
+@bp.route('/search')
+@login_required  # Требуется аутентификация для доступа к странице поиска
+def search():
+    # Проверяем, прошла ли форма поиска валидацию
+    if not g.search_form.validate():
+        # Если форма не прошла валидацию, перенаправляем пользователя на страницу исследования
+        return redirect(url_for('main.explore'))
+
+    # Извлекаем номер страницы из запроса, по умолчанию равен 1
+    page = request.args.get('page', 1, type=int)
+
+    # Выполняем поиск записей по заданному запросу и странице
+    posts, total = Post.search(g.search_form.q.data, page,
+                               current_app.config['POSTS_PER_PAGE'])
+
+    # Генерируем URL для следующей страницы, если она существует
+    next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
+        if total > page * current_app.config['POSTS_PER_PAGE'] else None
+
+    # Генерируем URL для предыдущей страницы, если она существует
+    prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
+        if page > 1 else None
+
+    # Отображаем страницу поиска с результатами
+    return render_template('search.html', title=_('Search'), posts=posts,
+                           next_url=next_url, prev_url=prev_url)
