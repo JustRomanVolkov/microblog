@@ -1,0 +1,67 @@
+import os
+import requests
+import json
+
+# Импортируем необходимые библиотеки: os для доступа к переменным окружения, requests для выполнения HTTP-запросов, json для работы с данными в формате JSON.
+
+def send_request_to_openai(prompt):
+    # Определяем функцию для отправки запросов к OpenAI API.
+    headers = {
+        'Authorization': f'Bearer {os.getenv("OPENAI_API_KEY")}',
+        'Content-Type': 'application/json',
+    }
+    # Устанавливаем заголовки запроса, включая токен авторизации.
+
+    data = {
+        'model': os.getenv('MODEL', 'gpt-3.5-turbo'),
+        'prompt': prompt,
+        'temperature': float(os.getenv('TEMPERATURE', 0.7)),
+        'max_tokens': int(os.getenv('MAX_TOKENS', 150)),
+        'top_p': float(os.getenv('TOP_P', 1.0)),
+        'frequency_penalty': 0,
+        'presence_penalty': 0,
+    }
+    # Формируем тело запроса с параметрами для модели OpenAI.
+
+    response = requests.post(os.getenv('OPENAI_API_ENDPOINT', 'https://api.openai.com/v1/completions'), headers=headers, json=data)
+    # Выполняем POST-запрос к API.
+
+    response.raise_for_status()  # Проверяем ответ на наличие ошибок.
+    return response.json()['choices'][0]['text'].strip()
+    # Возвращаем текстовый ответ от OpenAI, очищенный от пробелов.
+
+def post_comment_to_pr(comment_body):
+    # Определяем функцию для создания комментария в пулл-реквесте на GitHub.
+    github_token = os.getenv('GITHUB_TOKEN')
+    headers = {
+        'Authorization': f'token {github_token}',
+        'Accept': 'application/vnd.github.v3+json',
+    }
+    # Устанавливаем заголовки запроса, включая токен авторизации GitHub.
+
+    pr_comment_url = os.getenv('GITHUB_API_URL') + '/repos/' + os.getenv('GITHUB_REPOSITORY') + '/issues/' + os.getenv('GITHUB_EVENT_NUMBER') + '/comments'
+    # Формируем URL для создания комментария на GitHub.
+
+    data = {'body': comment_body}
+    # Устанавливаем тело комментария.
+
+    response = requests.post(pr_comment_url, headers=headers, data=json.dumps(data))
+    # Выполняем POST-запрос к GitHub API для создания комментария.
+
+    response.raise_for_status()  # Проверяем ответ на наличие ошибок.
+
+if __name__ == "__main__":
+    # Проверяем, является ли файл исполняемым, и запускаем основную логику скрипта.
+    prompt = os.getenv('PROMPT', 'Please review the following code for any issues or suggestions for improvements:')
+    # Получаем подсказку из переменной окружения или используем значение по умолчанию.
+
+    try:
+        review_comment = send_request_to_openai(prompt)
+        # Отправляем запрос к OpenAI и получаем ревью кода.
+        post_comment_to_pr(review_comment)
+        # Создаём комментарий к пулл-реквесту с полученным ревью.
+        print("Review comment posted successfully.")
+        # Выводим сообщение об успешной отправке комментария.
+    except Exception as e:
+        print(f"Failed to post review comment: {e}")
+        # В случае возникновения ошибки выводим сообщение.
