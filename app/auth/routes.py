@@ -4,9 +4,10 @@
 from typing import Union
 
 # Библиотеки третьей стороны
-from flask import render_template, flash, redirect, url_for, Response, request, g
-from flask_babel import gettext as _
-from flask_login import current_user, login_user, logout_user, login_required
+from flask import render_template, flash, redirect, url_for, Response, request
+from flask_babel import _
+from flask_login import current_user, login_user, logout_user
+import sqlalchemy as sa
 from urllib.parse import urlsplit
 from werkzeug import Response
 
@@ -40,8 +41,8 @@ def login() -> Union[str, 'Response']:
     # При отправке формы.
     if form.validate_on_submit():
         # Поиск пользователя в базе данных по имени пользователя.
-        user = User.query.filter_by(username=form.username.data).first()
-
+        user = db.session.scalar(
+            sa.select(User).where(User.username == form.username.data))
         # Проверка правильности имени пользователя и пароля.
         if user is None or not user.check_password(form.password.data):
             flash(_('Не верное имя пользователя или пароль'))
@@ -143,7 +144,7 @@ def reset_password_request() -> Union[str, Response]:
     # Если форма отправлена и прошла валидацию
     if form.validate_on_submit():
         # Ищем пользователя по email
-        user = User.query.filter_by(email=form.email.data).first()
+        user = db.session.scalar(sa.select(User).where(User.email == form.email.data))
         if user:
             # Отправляем email с инструкциями по сбросу пароля
             send_password_reset_email(user)
