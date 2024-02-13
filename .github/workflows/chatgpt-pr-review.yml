@@ -29,8 +29,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-        # Устанавливаем Python последней версии 3.x для выполнения скрипта
+          python-version: '3.10'
+          cache: 'pip'
+        # Устанавливаем Python последней версии 3.10 для выполнения скрипта
         
       - name: Install dependencies
         run: |
