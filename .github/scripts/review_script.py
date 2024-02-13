@@ -1,6 +1,8 @@
 import os
 import requests
 import json
+import time
+
 
 # Импортируем необходимые библиотеки: os для доступа к переменным окружения, requests для выполнения HTTP-запросов, json для работы с данными в формате JSON.
 
@@ -21,14 +23,26 @@ def send_request_to_openai(prompt):
         'frequency_penalty': float(os.getenv('FREQUENCY_PENALTY', 0)),
         'presence_penalty': float(os.getenv('PRESENCE_PENALTY', 0)),
     }
+    
+    max_retries = 5
+    retry_delay = 60  # Время задержки в секундах
+    
+    
     # Формируем тело запроса с параметрами для модели OpenAI.
 
-    response = requests.post(os.getenv('OPENAI_API_ENDPOINT', 'https://api.openai.com/v1/completions'), headers=headers, json=data)
-    # Выполняем POST-запрос к API.
+    for i in range(max_retries):
+        # Выполняем POST-запрос к API.
+        response = requests.post('https://api.openai.com/v1/completions', headers=headers, json=data)
 
-    response.raise_for_status()  # Проверяем ответ на наличие ошибок.
-    return response.json()['choices'][0]['text'].strip()
-    # Возвращаем текстовый ответ от OpenAI, очищенный от пробелов.
+        if response.status_code == 429:
+            if i < max_retries - 1:
+                time.sleep(retry_delay)
+                continue
+            else:
+                raise Exception("API rate limit exceeded and max retries reached.")
+        response.raise_for_status() # Проверяем ответ на наличие ошибок.
+        return response.json()['choices'][0]['text'].strip()    
+        # Возвращаем текстовый ответ от OpenAI, очищенный от пробелов.
 
 
 def post_comment_to_pr(comment_body, pull_request_number):
