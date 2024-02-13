@@ -2,14 +2,14 @@
 
 # Стандартные библиотеки Python
 from typing import Union
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Библиотеки третьей стороны
 from flask import current_app, flash, g, redirect, render_template, Response, request, url_for
 from flask_babel import gettext as _, get_locale
 from flask_login import current_user, login_required
 from langdetect import detect, LangDetectException
-from urllib.parse import urlsplit
+import sqlalchemy as sa
 
 # Собственные модули
 from werkzeug import Response
@@ -31,9 +31,11 @@ def before_request() -> None:
         None
     """
     if current_user.is_authenticated:
-        current_user.last_seen = datetime.utcnow()
+        current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
-        g.locale = str(get_locale())
+        g.search_form = SearchForm()
+    g.locale = str(get_locale())
+
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
@@ -66,8 +68,9 @@ def index() -> Union[str, 'Response']:
         return redirect(url_for('main.index'))
 
     page = request.args.get('page', 1, type=int)
-    posts = current_user.followed_posts().paginate(
-        page=page, per_page=current_app.config["POSTS_PER_PAGE"], error_out=False)
+    posts = db.paginate(current_user.following_posts(), page=page,
+                        per_page=current_app.config['POSTS_PER_PAGE'],
+                        error_out=False)
     next_url = url_for('main.index', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) if posts.has_prev else None
 
@@ -90,11 +93,13 @@ def explore() -> str:
 
     """
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page=page, per_page=current_app.config["POSTS_PER_PAGE"], error_out=False)
+    query = sa.select(Post).order_by(Post.timestamp.desc())
+    posts = db.paginate(query, page=page,
+                        per_page=current_app.config['POSTS_PER_PAGE'],
+                        error_out=False)
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
-    return render_template('index.html', title=_('Поиск'),
+    return render_template('index.html', title=_('Обзор'),
                            posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 
@@ -118,15 +123,25 @@ def user(username: str) -> str:
     Raises:
         404 Not Found: Если пользователь с указанным именем не найден.
     """
-    user = User.query.filter_by(username=username).first_or_404()
+    user = db.first_or_404(sa.select(User).where(User.username == username))
     page = request.args.get('page', 1, type=int)
-    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page=page, per_page=current_app.config["POSTS_PER_PAGE"], error_out=False)
+    query = user.posts.select().order_by(Post.timestamp.desc())
+    posts = db.paginate(query, page=page,
+                        per_page=current_app.config['POSTS_PER_PAGE'],
+                        error_out=False)
     next_url = url_for('main.user', username=user.username, page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.user', username=user.username, page=posts.prev_num) if posts.has_prev else None
     form = EmptyForm()
     return render_template('user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url, form=form)
+
+
+@bp.route('/user/<username>/popup')
+@login_required
+def user_popup(username):
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+    form = EmptyForm()
+    return render_template('user_popup.html', user=user, form=form)
 
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
@@ -185,7 +200,7 @@ def follow(username: str) -> Response:
     """
     form = EmptyForm()  # Создаем экземпляр пустой формы
     if form.validate_on_submit():  # Если форма отправлена
-        user = User.query.filter_by(username=username).first()  # Ищем пользователя по имени
+        user = db.session.scalar(sa.select(User).where(User.username == username)) # Ищем пользователя по имени
         if user is None:
             flash(_('Пользователь %(username)s не найден.', username=username))
             return redirect(url_for('main.index'))
@@ -222,7 +237,7 @@ def unfollow(username: str) -> Response:
     """
     form = EmptyForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=username).first()
+        user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(_(f"Пользователь {username} не найден."))
             return redirect(url_for('main.index'))
@@ -237,20 +252,6 @@ def unfollow(username: str) -> Response:
         return redirect(url_for('main.user', username=username))
     else:
         return redirect(url_for('main.index'))
-
-
-# Декоратор, выполняемый перед каждым запросом приложения
-@bp.before_app_request
-def before_request():
-    # Проверяем, аутентифицирован ли текущий пользователь
-    if current_user.is_authenticated:
-        # Если пользователь аутентифицирован, обновляем время его последнего посещения
-        current_user.last_seen = datetime.utcnow()
-        db.session.commit()  # Фиксируем изменения в базе данных
-        # Инициализируем форму поиска в глобальном контексте
-        g.search_form = SearchForm()
-    # Устанавливаем локаль для текущего запроса
-    g.locale = str(get_locale())
 
 
 # Маршрут для обработки запросов поиска
