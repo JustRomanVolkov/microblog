@@ -3,12 +3,14 @@
 # Стандартные библиотеки Python
 
 # Библиотеки третьей стороны
-from flask_babel import lazy_gettext as _l
+from flask_babel import _, lazy_gettext as _l
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+import sqlalchemy as sa
+from wtforms import BooleanField, PasswordField, StringField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
 # Собственные модули
+from app import db
 from app.models import User
 
 
@@ -47,30 +49,14 @@ class RegistrationForm(FlaskForm):
     submit: SubmitField = SubmitField(_l('Регистрация'))
 
     def validate_username(self, username):
-        """
-        Проверяет уникальность имени пользователя.
-
-        Args:
-            username (StringField): Поле имени пользователя.
-
-        Raises:
-            ValidationError: Если имя пользователя уже занято.
-        """
-        user = User.query.filter_by(username=username.data).first()
+        user = db.session.scalar(sa.select(User).where(
+            User.username == username.data))
         if user is not None:
             raise ValidationError(_l('Используйте другое имя.'))
 
     def validate_email(self, email):
-        """
-        Проверяет уникальность почты.
-
-        Args:
-            email (StringField): Поле почты.
-
-        Raises:
-            ValidationError: Если почта уже используется другим пользователем.
-        """
-        user = User.query.filter_by(email=email.data).first()
+        user = db.session.scalar(sa.select(User).where(
+            User.email == email.data))
         if user is not None:
             raise ValidationError(_l('Используйте другую почту.'))
 

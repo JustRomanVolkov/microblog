@@ -1,56 +1,49 @@
 {% extends "base.html" %}
 
-{% block app_content %}
+{% block content %}
     <table class="table table-hover">
         <tr>
             <td width="256px"><img src="{{ user.avatar(256) }}"></td>
             <td>
-                <h1>{{ _("Пользователь") }}: {{ user.username }}</h1>
-
+                <h1>{{ _('User') }}: {{ user.username }}</h1>
                 {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-
                 {% if user.last_seen %}
-                    <p>{{ _("Последнее посещение") }}: {{ moment(user.last_seen).format('LLL') }}</p>
+                <p>{{ _('Last seen on') }}: {{ moment(user.last_seen).format('LLL') }}</p>
                 {% endif %}
-                <p>{{ _('%(count)d подписчиков', count=user.followers.count()) }},
-                    {{ _('%(count)d подписок', count=user.followed.count()) }}</p>
-
+                <p>{{ _('%(count)d followers', count=user.followers_count()) }}, {{ _('%(count)d following', count=user.following_count()) }}</p>
                 {% if user == current_user %}
-                    <p><a href="{{ url_for('main.edit_profile') }}">
-                        {{ _('Редактирование профиля') }}
-                    </a></p>
+                <p><a href="{{ url_for('main.edit_profile') }}">{{ _('Edit your profile') }}</a></p>
                 {% elif not current_user.is_following(user) %}
-                    <p>
-                        <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
-                            {{ form.hidden_tag() }}
-                            {{ form.submit(value=_('Подписаться'), class_='btn btn-default' )}}
-                        </form>
-                    </p>
+                <p>
+                    <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value=_('Follow'), class_='btn btn-primary') }}
+                    </form>
+                </p>
                 {% else %}
-                    <p>
-                        <form action="{{ url_for('main.unfollow', username=user.username) }}" method="post">
-                            {{ form.hidden_tag() }}
-                            {{ form.submit(value=_('Отписаться'), class_='btn btn-default') }}
-                        </form>
-                    </p>
+                <p>
+                    <form action="{{ url_for('main.unfollow', username=user.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value=_('Unfollow'), class_='btn btn-primary') }}
+                    </form>
+                </p>
                 {% endif %}
             </td>
         </tr>
     </table>
-
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
-    <nav aria-label="...">
-        <ul class="pager">
-            <li class="previous{% if not prev_url %} disabled {% endif %}">
-                <a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span>{{ _("Новые сообщения") }}
+    <nav aria-label="Post navigation">
+        <ul class="pagination">
+            <li class="page-item{% if not prev_url %} disabled{% endif %}">
+                <a class="page-link" href="{{ prev_url }}">
+                    <span aria-hidden="true">&larr;</span> {{ _('Newer posts') }}
                 </a>
             </li>
-            <li class="next{% if not next_url %} disabled {% endif %}">
-                <a href="{{ next_url or '#' }}">
-                    {{ _("Старые сообщения") }} <span aria-hidden="true">&rarr;</span>
+            <li class="page-item{% if not next_url %} disabled{% endif %}">
+                <a class="page-link" href="{{ next_url }}">
+                    {{ _('Older posts') }} <span aria-hidden="true">&rarr;</span>
                 </a>
             </li>
         </ul>
