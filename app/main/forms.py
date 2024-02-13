@@ -2,12 +2,14 @@
 
 # Библиотеки третьей стороны
 from flask import request
-from flask_babel import lazy_gettext as _loc
+from flask_babel import _, lazy_gettext as _l
 from flask_wtf import FlaskForm
+import sqlalchemy as sa
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length, ValidationError
 
 # Собственные модули
+from app import db
 from app.models import User
 
 
@@ -27,9 +29,9 @@ class EditProfileForm(FlaskForm):
         validate_username(self, username: StringField):
             Метод для валидации имени пользователя.
     """
-    username: StringField = StringField(_loc('Имя пользователя'), validators=[DataRequired()])
-    about_me: TextAreaField = TextAreaField(_loc('Обо мне'), validators=[Length(min=0, max=140)])
-    submit: SubmitField = SubmitField(_loc('Принять изменения'))
+    username: StringField = StringField(_l('Имя пользователя'), validators=[DataRequired()])
+    about_me: TextAreaField = TextAreaField(_l('Обо мне'), validators=[Length(min=0, max=140)])
+    submit: SubmitField = SubmitField(_l('Принять изменения'))
 
     def __init__(self, original_username: str, *args, **kwargs):
         """
@@ -40,7 +42,7 @@ class EditProfileForm(FlaskForm):
             *args: Позиционные аргументы FlaskForm.
             **kwargs: Именованные аргументы FlaskForm.
         """
-        super(EditProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.original_username = original_username
 
     def validate_username(self, username: StringField):
@@ -54,9 +56,10 @@ class EditProfileForm(FlaskForm):
             ValidationError: Вызывается, если пользователь с таким именем уже существует в базе данных.
         """
         if username.data != self.original_username:
-            user = User.query.filter_by(username=self.username.data).first()
+            user = db.session.scalar(sa.select(User).where(
+                User.username == self.username.data))
             if user is not None:
-                raise ValidationError(_loc("Пожалуйста, используйте другое имя для пользователя. Это имя уже занято."))
+                raise ValidationError(_l("Пожалуйста, используйте другое имя для пользователя. Это имя уже занято."))
 
 
 class EmptyForm(FlaskForm):
@@ -78,13 +81,13 @@ class PostForm(FlaskForm):
         post (TextAreaField): Поле для ввода текста поста. Обязательное поле.
         submit (SubmitField): Кнопка для отправки поста.
     """
-    post = TextAreaField(_loc("Напишите что-нибудь"), validators=[
+    post = TextAreaField(_l("Напишите что-нибудь"), validators=[
         DataRequired(), Length(min=1, max=140)])
-    submit = SubmitField(_loc("Отправить"))
+    submit = SubmitField(_l("Отправить"))
 
 
 class SearchForm(FlaskForm):
-    q = StringField(_loc('Search'), validators=[DataRequired()])  # Определение поля для ввода текста поиска
+    q = StringField(_l('Search'), validators=[DataRequired()])  # Определение поля для ввода текста поиска
 
     def __init__(self, *args, **kwargs):
         # Проверяем, были ли переданы данные формы в качестве аргументов
