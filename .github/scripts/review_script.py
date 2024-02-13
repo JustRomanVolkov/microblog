@@ -52,9 +52,6 @@ def post_comment_to_pr(comment_body, pull_request_number):
         'Authorization': f'token {github_token}',
         'Accept': 'application/vnd.github.v3+json',
     }
-    # Устанавливаем заголовки запроса, включая токен авторизации GitHub.
-    print(f"GITHUB_REPOSITORY: {os.getenv('GITHUB_REPOSITORY')}")
-
     pr_comment_url = f'https://api.github.com/repos/{os.getenv("GITHUB_REPOSITORY")}/issues/{pull_request_number}/comments'
     print(f"pr_comment_url: {pr_comment_url}")
     # Формируем URL для создания комментария на GitHub.
