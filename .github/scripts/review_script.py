@@ -55,8 +55,8 @@ def post_comment_to_pr(comment_body, pull_request_number):
     # Устанавливаем заголовки запроса, включая токен авторизации GitHub.
     print(f"GITHUB_REPOSITORY: {os.getenv('GITHUB_REPOSITORY')}")
 
-
     pr_comment_url = f'https://api.github.com/repos/{os.getenv("GITHUB_REPOSITORY")}/issues/{pull_request_number}/comments'
+    print(f"pr_comment_url: {pr_comment_url}")
     # Формируем URL для создания комментария на GitHub.
 
     response = requests.post(pr_comment_url, headers=headers, json={'body': comment_body})
@@ -69,10 +69,7 @@ if __name__ == "__main__":
     # Получаем данные события из файла события, который предоставляет GitHub
     with open(os.getenv('GITHUB_EVENT_PATH')) as event_file:
         event_data = json.load(event_file)
-        print(json.dumps(event_data, indent=4))  # Для наглядности структуры JSON
-
     pull_request_number = event_data['pull_request']['number'] # Получаем номер пулл-реквеста из данных события
-
     # Проверяем, является ли файл исполняемым, и запускаем основную логику скрипта.
     prompt = os.getenv('PROMPT', 'Please review the following code for any issues or suggestions for improvements:')
     # Получаем подсказку из переменной окружения или используем значение по умолчанию.
