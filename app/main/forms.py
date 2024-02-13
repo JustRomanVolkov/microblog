@@ -100,3 +100,8 @@ class SearchForm(FlaskForm):
             kwargs['meta'] = {'csrf': False}
         # Вызываем конструктор родительского класса с переданными аргументами
         super(SearchForm, self).__init__(*args, **kwargs)
+
+class MessageForm(FlaskForm):
+    message = TextAreaField(_l('Message'), validators=[
+        DataRequired(), Length(min=0, max=140)])
+    submit = SubmitField(_l('Submit'))
