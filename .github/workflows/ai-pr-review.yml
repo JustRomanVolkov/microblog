@@ -1,4 +1,4 @@
-name: ChatGPT PR Review
+name: AI PR Review
 # Задаём имя рабочего процесса
 
 on:
@@ -23,14 +23,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         # Используем действие actions/checkout@v2 для клонирования репозитория
         
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-        # Устанавливаем Python последней версии 3.x для выполнения скрипта
+          python-version: '3.10'
+        # Устанавливаем Python последней версии 3.10 для выполнения скрипта
         
       - name: Install dependencies
         run: |
@@ -42,12 +42,11 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_API_ENDPOINT: ${{ secrets.OPENAI_API_ENDPOINT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MODEL: ${{ secrets.MODEL }}
-          LANGUAGE: ${{ secrets.LANGUAGE }}
-          PROMPT: ${{ secrets.PROMPT }}
-          TEMPERATURE: ${{ secrets.TEMPERATURE }}
-          TOP_P: ${{ secrets.TOP_P }}
-          MAX_TOKENS: ${{ secrets.MAX_TOKENS }}
+          SYSTEM_PROMPT: ${{ secrets.SYSTEM_PROMPT }}
+          USER_PROMPT: ${{ secrets.USER_PROMPT }}
+
         # Передаём в окружение скрипта необходимые переменные из секретов
         run: |
           python .github/scripts/review_script.py
